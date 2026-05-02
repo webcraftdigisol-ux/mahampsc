@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MPSCai — Rajyaseva Prep Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&family=Tiro+Devanagari+Marathi&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0C1118;--surf:#141B24;--surf2:#1C2532;--bdr:#2A3547;
+  --gold:#F5A623;--goldd:rgba(245,166,35,.12);
+  --teal:#0EA5A0;--teald:rgba(14,165,160,.12);
+  --red:#EF4444;--green:#22C55E;--navy:#1B3A6B;--saffron:#FF6B35;
+  --txt:#E8EDF3;--muted:#7A8FA6;--dim:#4A5A6E;--r:12px;
+  --ff:'DM Sans',sans-serif;--fd:'Playfair Display',serif;
+}
+body{background:var(--bg);color:var(--txt);font-family:var(--ff);min-height:100vh}
+body.mr{font-family:'Tiro Devanagari Marathi',serif}
+body.mr .lat{font-family:'DM Sans',sans-serif!important}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--surf)}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:99px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.fade{animation:fadeUp .3s ease forwards}
+#shell{display:flex;min-height:100vh}
+#sidebar{width:228px;background:var(--surf);border-right:1px solid var(--bdr);display:flex;flex-direction:column;padding:16px 12px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+#main{flex:1;padding:22px 26px;overflow-y:auto}
+.logo{font-family:var(--fd);font-size:22px;color:var(--gold)}
+.logo span{color:var(--teal)}
+.logo-sub{font-size:10px;color:var(--dim);letter-spacing:.08em;margin-top:2px}
+.mode-wrap{background:var(--surf2);border-radius:8px;padding:4px;display:flex;margin:14px 0;border:1px solid var(--bdr)}
+.mode-btn{flex:1;padding:7px 0;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;transition:all .15s;background:transparent;color:var(--muted)}
+.mode-btn.on{background:var(--gold);color:#0C0800}
+.nav-label{font-size:10px;color:var(--dim);letter-spacing:.08em;padding:4px 6px 8px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);border:1px solid transparent;transition:all .15s;margin-bottom:2px}
+.nav-item:hover{background:var(--surf2);color:var(--txt)}
+.nav-item.on{background:var(--goldd);color:var(--gold);border-color:rgba(245,166,35,.2)}
+.stats-box{padding-top:14px;border-top:1px solid var(--bdr);margin-top:auto}
+.stat-row{display:flex;justify-content:space-between;margin-bottom:7px}
+.stat-lbl{font-size:12px;color:var(--muted)}
+.stat-val{font-size:14px;font-weight:700}
+#topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--bdr)}
+.pg-tag{font-size:10px;color:var(--dim);letter-spacing:.1em;font-weight:600;margin-bottom:3px}
+.pg-title{font-family:var(--fd);font-size:24px}
+.tbr{display:flex;gap:10px;align-items:center}
+.lang-btn{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:99px;cursor:pointer;border:1px solid var(--bdr);background:var(--surf2);font-size:12px;font-weight:600;color:var(--muted);user-select:none;transition:all .2s}
+.lang-btn:hover{border-color:var(--saffron);color:var(--txt)}
+.trk{width:28px;height:16px;border-radius:99px;position:relative;flex-shrink:0;transition:background .25s}
+.thm{position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .25s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.thm.on{transform:translateX(12px)}
+.avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:12px}
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r)}
+.cbody{padding:20px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:inherit}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-g{background:var(--gold);color:#0C0800}
+.btn-g:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 6px 18px rgba(245,166,35,.3)}
+.btn-t{background:var(--teal);color:#fff}
+.btn-t:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-1px)}
+.btn-gh{background:var(--surf2);color:var(--txt);border:1px solid var(--bdr)}
+.btn-gh:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+.btn-w{width:100%;justify-content:center;margin-top:12px}
+input,textarea,select{background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-family:inherit;padding:10px 14px;font-size:14px;width:100%;transition:border-color .2s;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--gold)}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.field{margin-bottom:14px}
+.upzone{border:2px dashed var(--bdr);border-radius:var(--r);padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s}
+.upzone:hover,.upzone.drag{border-color:var(--gold);background:var(--goldd)}
+.tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600}
+.tg{background:var(--goldd);color:var(--gold)}
+.tt{background:var(--teald);color:var(--teal)}
+.tr{background:rgba(239,68,68,.12);color:var(--red)}
+.tk{background:rgba(34,197,94,.12);color:var(--green)}
+.pb{height:6px;background:var(--surf2);border-radius:99px;overflow:hidden;margin:5px 0}
+.pf{height:100%;border-radius:99px;transition:width .6s ease}
+.mopt{padding:11px 15px;border-radius:8px;border:1px solid var(--bdr);cursor:pointer;transition:all .15s;font-size:14px;margin-bottom:8px}
+.mopt:hover{border-color:var(--teal);background:var(--teald)}
+.mopt.sel{border-color:var(--gold);background:var(--goldd)}
+.mopt.ok{border-color:var(--green)!important;background:rgba(34,197,94,.12)!important;color:var(--green);font-weight:600}
+.mopt.bad{border-color:var(--red)!important;background:rgba(239,68,68,.12)!important;color:var(--red)}
+.chat-wrap{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-right:4px;margin-bottom:14px}
+.bub{max-width:80%;padding:12px 16px;border-radius:12px;font-size:14px;line-height:1.6}
+.bub-ai{background:var(--surf2);border:1px solid var(--bdr);border-bottom-left-radius:4px;align-self:flex-start}
+.bub-u{background:var(--navy);border-bottom-right-radius:4px;align-self:flex-end}
+.sndr{font-size:11px;color:var(--dim);margin-bottom:3px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.ftab{padding:7px 15px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s;color:var(--muted)}
+.ftab:hover{color:var(--txt);background:var(--surf2)}
+.ftab.on{background:var(--gold);color:#0C0800}
+.sp{display:inline-block;width:15px;height:15px;border:2px solid rgba(245,166,35,.25);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
+.syl{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.18);font-size:12px;color:var(--gold);margin-bottom:14px}
+.art{background:var(--surf2);border-radius:8px;padding:16px;border-left:3px solid var(--gold);margin-bottom:10px}
+.art-h{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px}
+.art-t{font-weight:600;font-size:14px;flex:1}
+.score-box{background:var(--navy);border-radius:var(--r);padding:26px;text-align:center;margin-bottom:14px}
+.score-big{font-family:var(--fd);font-size:38px;color:var(--gold)}
+.swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.param-row{margin-bottom:14px}
+.param-lbl{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.kterm{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--bdr);color:var(--muted);display:inline-block;margin:2px}
+.notice{padding:10px 14px;border-radius:8px;font-size:12px;line-height:1.7}
+.n-gold{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);color:var(--gold)}
+.n-teal{background:rgba(14,165,160,.08);border:1px solid rgba(14,165,160,.2);color:var(--teal)}
+.n-green{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:var(--green)}
+.sec-title{font-family:var(--fd);font-size:22px;margin-bottom:6px}
+.sec-sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+.tribar{height:3px;background:linear-gradient(90deg,var(--saffron) 33%,#fff 33% 66%,var(--green) 66%)}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px}
+.modal-box{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:32px;max-width:440px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.hidden{display:none!important}
+.pdf-icon{width:54px;height:66px;background:linear-gradient(135deg,#ff6b6b,#ee5a5a);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(238,90,90,.3);margin:0 auto 10px}
+.expl-box{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px}
+.set-card{padding:18px;margin-bottom:12px;cursor:pointer}
+.set-card:hover{border-color:var(--gold)}
+@keyframes ripple{0%{transform:scale(1);opacity:1}100%{transform:scale(1.9);opacity:0}}
+@keyframes voicePulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
+.mic-btn{width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;position:relative;font-size:18px}
+.mic-btn.idle{background:var(--surf2);border:1px solid var(--bdr)}
+.mic-btn.idle:hover{border-color:var(--teal);background:var(--teald)}
+.mic-btn.recording{background:var(--red);animation:voicePulse 1.2s infinite}
+.mic-btn.recording::after{content:'';position:absolute;inset:0;border-radius:50%;background:rgba(239,68,68,.4);animation:ripple 1.2s infinite}
+.voice-bar{display:flex;align-items:center;gap:3px;height:20px}
+.voice-bar span{display:inline-block;width:3px;border-radius:99px;background:var(--red);animation:voiceWave 0.8s ease-in-out infinite}
+.voice-bar span:nth-child(1){height:6px;animation-delay:0s}
+.voice-bar span:nth-child(2){height:14px;animation-delay:.1s}
+.voice-bar span:nth-child(3){height:20px;animation-delay:.2s}
+.voice-bar span:nth-child(4){height:14px;animation-delay:.3s}
+.voice-bar span:nth-child(5){height:6px;animation-delay:.4s}
+@keyframes voiceWave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(0.3)}}
+.voice-mode-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;font-size:11px;font-weight:600;color:var(--muted);transition:all .2s}
+.voice-mode-btn.on{background:var(--teald);border-color:var(--teal);color:var(--teal)}
+.voice-mode-btn:hover{border-color:var(--teal);color:var(--teal)}
+.transcript-preview{background:var(--surf2);border:1px dashed var(--bdr);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--muted);font-style:italic;min-height:40px;margin-bottom:8px;line-height:1.5}
+.transcript-preview.has-text{color:var(--txt);font-style:normal;border-color:var(--gold)}
+
+/* ── PANEL STYLE CARDS ── */
+.panel-card{border:2px solid var(--bdr);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .18s;text-align:center}
+.panel-card:hover{border-color:var(--teal)}
+.panel-card.on{border-color:var(--gold);background:var(--goldd)}
+.panel-card .panel-icon{font-size:26px;margin-bottom:6px}
+.panel-card .panel-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.panel-card .panel-desc{font-size:11px;color:var(--muted);line-height:1.4}
+/* ── PER-ANSWER INLINE SCORE ── */
+.ans-score{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr)}
+.ans-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:600}
+/* ── RISK ZONE BADGE ── */
+.risk-badge{padding:6px 12px;border-radius:8px;font-size:12px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--red);margin-bottom:6px;display:inline-block}
+.strength-badge{padding:6px 12px;border-radius:8px;font-size:12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:var(--green);margin-bottom:6px;display:inline-block}
+/* ── DAF SECTION HEADER ── */
+.daf-section{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--gold);text-transform:uppercase;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)}
+/* ── DASHBOARD CARDS ── */
+.dash-stat{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:18px 20px;display:flex;align-items:center;gap:14px}
+.dash-icon{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-size:20px;flex-shrink:0}
+.dash-val{font-family:var(--fd);font-size:26px;font-weight:700}
+.dash-lbl{font-size:12px;color:var(--muted);margin-top:2px}
+/* ── KNOWLEDGE MODULE ── */
+.district-card{padding:14px;border-radius:8px;background:var(--surf2);border:1px solid var(--bdr);cursor:pointer;transition:all .15s;margin-bottom:8px}
+.district-card:hover{border-color:var(--teal)}
+.district-card.on{border-color:var(--gold);background:var(--goldd)}
+/* ── REPORT CARD ── */
+.report-section{background:var(--surf2);border-radius:10px;padding:18px;margin-bottom:14px}
+.report-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.compare-box{background:var(--surf);border-radius:8px;padding:14px;font-size:13px;line-height:1.6}
+/* ── PROGRESS CHART BAR ── */
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.prog-bar-wrap{flex:1;height:8px;background:var(--surf2);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;transition:width .6s ease}
+/* ── TABS SECONDARY ── */
+.tab-line{display:flex;gap:0;border-bottom:1px solid var(--bdr);margin-bottom:20px}
+.tab-line-item{padding:10px 18px;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .15s;margin-bottom:-1px}
+.tab-line-item.on{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-line-item:hover:not(.on){color:var(--txt)}
+</style>
+</head>
+<body>
+
+<div id="key-modal" class="modal-ov">
+  <div class="modal-box">
+    <div style="text-align:center;margin-bottom:20px">
+      <div class="logo lat" style="font-size:26px">MPSCai <span>Platform</span></div>
+      <div class="logo-sub lat">RAJYASEVA PREP PLATFORM</div>
+    </div>
+    <div style="text-align:center;font-size:32px;margin-bottom:16px">🔑</div>
+    <div style="font-size:16px;font-weight:700;text-align:center;margin-bottom:6px">Enter Your Anthropic API Key</div>
+    <p style="font-size:13px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:16px">Stored in your browser only. Never sent anywhere except the Anthropic API.</p>
+    <input type="password" id="key-inp" placeholder="sk-ant-api03-..." style="margin-bottom:10px;font-family:monospace"/>
+    <div id="key-err" class="notice hidden" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red);margin-bottom:10px"></div>
+    <button class="btn btn-g btn-w" id="key-btn" onclick="saveKey()">✓ Save &amp; Continue</button>
+    <div class="notice n-teal" style="margin-top:14px">
+      💡 <strong>Get API key:</strong><br>
+      1. Go to <a href="https://console.anthropic.com" target="_blank" style="color:var(--gold)">console.anthropic.com</a><br>
+      2. API Keys → Create Key → paste above
+    </div>
+  </div>
+</div>
+
+<div id="shell" class="hidden">
+  <aside id="sidebar">
+    <div id="tcbar" class="hidden"></div>
+    <div style="padding:6px 4px 14px">
+      <div class="logo lat">MPSCai</div>
+      <div class="logo-sub" id="sb-sub">RAJYASEVA PREP PLATFORM</div>
+    </div>
+    <div class="mode-wrap">
+      <button class="mode-btn on lat" id="btn-s" onclick="setMode('student')">🎓 Student</button>
+      <button class="mode-btn lat" id="btn-a" onclick="setMode('admin')">⚙️ Admin</button>
+    </div>
+    <nav id="nav-menu"></nav>
+    <div class="stats-box">
+      <div class="nav-label" id="sb-stats-l">STATS</div>
+      <div class="stat-row"><span class="stat-lbl" id="sl-art">Articles</span><span class="stat-val lat" id="sv-art" style="color:var(--teal)">0</span></div>
+      <div class="stat-row"><span class="stat-lbl" id="sl-q">Questions</span><span class="stat-val lat" id="sv-q" style="color:var(--gold)">0</span></div>
+      <div class="stat-row"><span class="stat-lbl" id="sl-s">Subjects</span><span class="stat-val lat" id="sv-s" style="color:var(--green)">0</span></div>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div id="topbar">
+      <div>
+        <div class="pg-tag lat" id="pg-tag">STUDENT PORTAL</div>
+        <div class="pg-title" id="pg-title">Notes</div>
+      </div>
+      <div class="tbr">
+        <button class="lang-btn" onclick="toggleLang()" id="lang-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm0 0c-2.5 2.5-4 6-4 10s1.5 7.5 4 10m0-20c2.5 2.5 4 6 4 10s-1.5 7.5-4 10M2 12h20"/></svg>
+          <span id="lang-lbl">मराठी</span>
+          <div class="trk" id="trk" style="background:var(--teal)"><div class="thm lat" id="thm"></div></div>
+        </button>
+        <span class="lat" style="font-size:12px;color:var(--muted)" id="tb-date"></span>
+        <button onclick="changeKey()" style="background:var(--surf2);border:1px solid var(--bdr);border-radius:6px;padding:5px 8px;cursor:pointer;color:var(--muted);font-size:13px" title="Change API Key">🔑</button>
+        <div class="avatar lat" id="tb-av" style="background:var(--gold);color:#0C0800">S</div>
+      </div>
+    </div>
+    <div id="content"></div>
+  </main>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────
+const ST = {
+  lang:'en', mode:'student', tab:'notes',
+  notes:[], mcqSets:[], swot:{},
+  mcqActive:null, mcqQi:0, mcqSel:null, mcqRev:false, mcqDone:false,
+  mcqScore:{c:0,w:0,t:0,sub:{}}, mcqSetIdx:0,
+  ivStep:'setup', ivMsgs:[], ivBio:{}, ivQn:0, ivFb:null, ivSys:'',
+  ivPanelStyle:'friendly',    // friendly | stress | cross
+  ivAnsFeedback:[],           // per-answer scores array
+  ivRiskZones:[], ivSuggestedQs:[],  // from profile analysis
+  dashSessions:[],            // progress history saved in localStorage
+  knowledgeDistrict:'Pune',   // active district in knowledge module
+  knowledgeTab:'economy',     // sub-tab in knowledge module
+  maMode:'upload', maResult:null, maQ:'', maTyped:'',
+  ivVoiceMode:false, ivRecording:false, ivTranscript:'',
+  notesFilter:'All', swotAI:null, anFile:null, maFile:null,
+};
+
+// ── TRANSLATIONS ──────────────────────────────────────────────────────────
+const L = {
+en:{
+  sub:'RAJYASEVA PREP PLATFORM', stats:'STATS', art:'Articles', qs:'Questions', subs:'Subjects',
+  student:'🎓 Student', admin:'⚙️ Admin', stTools:'STUDENT TOOLS', adTools:'ADMIN TOOLS',
+  stPortal:'STUDENT PORTAL', adPanel:'ADMIN PANEL', langLbl:'मराठी',
+  navLabels:{notes:'Notes',mcq:'MCQ Practice',mains:'Mains Eval',swot:'My SWOT',interview:'Mock Interview',caAdmin:'Current Affairs',mcqAdmin:'MCQ Generator',knowledge:'Knowledge Base',dashboard:'My Progress'},
+  notesTitle:'Notes Generator', notesDesc:'Upload newspaper photos or PDFs — AI extracts MPSC-syllabus notes only',
+  paper:'Newspaper', section:'Section / Focus (optional)', secPH:'e.g. Front page, Economy...',
+  dropTxt:'Drop newspaper image or PDF here', dropSub:'PNG, JPG • PDF (multi-page) • or click to browse',
+  multiPDF:'Multi-page PDF (~{n} pages). AI will scan all pages for MPSC content only.',
+  genNotes:'Generate AI Notes', extracting:'Extracting MPSC notes...', readingPDF:'Reading {n}-page PDF...',
+  clickReplace:'Click to replace', pdfPg:'p PDF',
+  mcqAdTitle:'MCQ Generator', mcqAdDesc:'Generate MPSC-syllabus MCQs from current affairs notes',
+  srcBatch:'Source Batch', cnt:'Count', diff:'Difficulty', genMCQ:'Generate Question Set', generating:'Generating...',
+  noNotesTip:'Generate notes from Current Affairs tab first', moreQ:'+{n} more questions',
+  snTitle:'Current Affairs Notes', snDesc:'MPSC-syllabus-curated notes with exam angles',
+  noNotes:'No notes yet. Admin will publish soon.', allFil:'All',
+  mcqTitle:'MCQ Practice', mcqDesc:'Practice MPSC-aligned questions',
+  noSets:'No question sets yet. Check back soon!',
+  startBtn:'Start →', backBtn:'← Back', submitBtn:'Submit Answer', nextBtn:'Next →',
+  resultsBtn:'See Results', retryBtn:'Retry', allSetsBtn:'All Sets',
+  expl:'✓ Explanation:', corr:'correct', wrng:'wrong', scoreTxt:'Score: {n}%',
+  maTitle:'Mains Answer Evaluator', maDesc:'Upload or type your answer — get personalised MPSC examiner feedback',
+  qLabel:'Question *', qPH:"e.g. Discuss the role of cooperative sector in Maharashtra's agricultural economy.",
+  upHW:'📷 Upload Handwritten', typeAns:'⌨️ Type Answer',
+  upPH:'Upload answer sheet photo or PDF', upSub:'JPG, PNG, PDF supported',
+  typePH:'Type your mains answer here (~200 words for 10 marks)...',
+  getEval:'Get AI Evaluation', evalBtn:'Evaluating...',
+  gradeLbl:'Grade:', paramScore:'Parameter-wise Score',
+  strengths:'✅ Strengths', improve:'🔧 Improve', missing:'💡 Missing Points', mpscSpec:'MPSC:',
+  pNames:{contentDepth:'Content Depth',structureClarity:'Structure & Clarity',examples:'Examples Used',introduction:'Introduction',conclusion:'Conclusion',wordLimit:'Word Limit'},
+  swotTitle:'My SWOT Analysis', swotDesc:'AI analysis of your subject-wise performance',
+  noSwot:'No data yet — attempt MCQ practice first',
+  subPerf:'Subject Performance', genSwot:'Generate SWOT Analysis', analysing:'Analysing...',
+  studyPlan:'📅 Study Plan',
+  swotQ:{strengths:'💪 Strengths',weaknesses:'🔧 Weaknesses',opportunities:'🚀 Opportunities',threats:'⚠️ Threats'},
+  swotC:['var(--green)','var(--red)','var(--teal)','var(--gold)'],
+  swotBg:['rgba(34,197,94,.06)','rgba(239,68,68,.06)','rgba(14,165,160,.06)','rgba(245,166,35,.06)'],
+  swotBd:['rgba(34,197,94,.2)','rgba(239,68,68,.2)','rgba(14,165,160,.2)','rgba(245,166,35,.2)'],
+  ivTitle:'AI Mock Interview', ivDesc:'MPSC panel simulation with personalised feedback',
+  yourProfile:'Your Profile',
+  ivFields:{name:'Full Name *',edu:'Education *',dist:'Home District *',opt:'Optional Subject',hobby:'Hobbies',exp:'Work Experience'},
+  ivPH:{name:'As in application form',edu:'e.g. B.E. Civil, Nagpur University',dist:'e.g. Pune, Nashik, Nagpur',opt:'e.g. Geography, History',hobby:'e.g. Reading, Trekking',exp:'e.g. 2 yrs IT, NGO work'},
+  ivNote:'AI will ask personalised questions based on your district, education and current affairs — exactly like a real MPSC board.',
+  startIv:'Start Mock Interview', settingUp:'Setting up...', board:'MPSC Board', typeAnsIv:'Type your answer...', voiceMode:'🎙 Voice', typeMode:'⌨️ Type', recording:'Recording... speak now', tapToStop:'Tap mic to stop', voiceNotSupported:'Voice not supported in this browser. Please use Chrome.',
+  ivFbTitle:'Interview Feedback', dimScore:'Dimension Scores', keyTips:'💡 Key Tips', newIv:'New Interview',
+  dNames:{communication:'Communication',subjectKnowledge:'Subject Knowledge',confidence:'Confidence',analyticalAbility:'Analytical Ability',currentAffairs:'Current Affairs',personalityFit:'Personality Fit'},
+  sylBadge:'🎯 MPSC Syllabus Filter: ON — Only Rajyaseva-relevant articles extracted',
+},
+mr:{
+  sub:'राज्यसेवा तयारी मंच', stats:'आकडेवारी', art:'लेख', qs:'प्रश्न', subs:'विषय',
+  student:'🎓 विद्यार्थी', admin:'⚙️ प्रशासक', stTools:'विद्यार्थी साधने', adTools:'प्रशासक साधने',
+  stPortal:'विद्यार्थी पोर्टल', adPanel:'प्रशासक पॅनेल', langLbl:'English',
+  navLabels:{notes:'नोट्स',mcq:'MCQ सराव',mains:'मुख्य मूल्यांकन',swot:'माझे SWOT',interview:'मॉक मुलाखत',caAdmin:'चालू घडामोडी',mcqAdmin:'MCQ निर्माता',knowledge:'ज्ञान केंद्र',dashboard:'माझी प्रगती'},
+  notesTitle:'नोट्स निर्माता', notesDesc:'वर्तमानपत्र फोटो किंवा PDF अपलोड करा — AI फक्त MPSC अभ्यासक्रमातील नोट्स काढते',
+  paper:'वर्तमानपत्र', section:'विभाग / फोकस (पर्यायी)', secPH:'उदा. मुखपृष्ठ, अर्थव्यवस्था...',
+  dropTxt:'वर्तमानपत्र फोटो किंवा PDF येथे टाका', dropSub:'PNG, JPG • PDF (बहुपृष्ठ) • किंवा ब्राउझ करा',
+  multiPDF:'बहुपृष्ठ PDF (~{n} पाने). AI फक्त MPSC-संबंधित माहिती काढेल.',
+  genNotes:'AI नोट्स तयार करा', extracting:'MPSC नोट्स काढत आहे...', readingPDF:'{n}-पान PDF वाचत आहे...',
+  clickReplace:'बदलण्यासाठी क्लिक करा', pdfPg:'पाने PDF',
+  mcqAdTitle:'MCQ निर्माता', mcqAdDesc:'चालू घडामोडी नोट्समधून MPSC MCQ तयार करा',
+  srcBatch:'स्रोत बॅच', cnt:'संख्या', diff:'कठिणता', genMCQ:'प्रश्नसंच तयार करा', generating:'तयार होत आहे...',
+  noNotesTip:'आधी चालू घडामोडी टॅबमधून नोट्स तयार करा', moreQ:'+{n} अधिक प्रश्न',
+  snTitle:'चालू घडामोडी नोट्स', snDesc:'MPSC अभ्यासक्रमानुसार नोट्स',
+  noNotes:'अद्याप नोट्स नाहीत. प्रशासक लवकरच प्रकाशित करतील.', allFil:'सर्व',
+  mcqTitle:'MCQ सराव', mcqDesc:'चालू घडामोडींवरील MPSC प्रश्नांचा सराव करा',
+  noSets:'अद्याप प्रश्नसंच नाही. लवकरच येतील!',
+  startBtn:'सुरू करा →', backBtn:'← मागे', submitBtn:'सबमिट', nextBtn:'पुढे →',
+  resultsBtn:'निकाल पाहा', retryBtn:'पुन्हा करा', allSetsBtn:'सर्व संच',
+  expl:'✓ स्पष्टीकरण:', corr:'बरोबर', wrng:'चुकीचे', scoreTxt:'गुण: {n}%',
+  maTitle:'मुख्य उत्तर मूल्यांकनकर्ता', maDesc:'उत्तर अपलोड करा किंवा टाइप करा — MPSC परीक्षकाचा अभिप्राय मिळवा',
+  qLabel:'प्रश्न *', qPH:'उदा. महाराष्ट्राच्या कृषी अर्थव्यवस्थेत सहकार क्षेत्राची भूमिका चर्चा करा.',
+  upHW:'📷 हस्तलिखित अपलोड करा', typeAns:'⌨️ उत्तर टाइप करा',
+  upPH:'उत्तरपत्रिका फोटो किंवा PDF अपलोड करा', upSub:'JPG, PNG, PDF समर्थित',
+  typePH:'येथे मुख्य परीक्षेचे उत्तर टाइप करा (~२०० शब्द)...',
+  getEval:'AI मूल्यांकन मिळवा', evalBtn:'मूल्यांकन होत आहे...',
+  gradeLbl:'श्रेणी:', paramScore:'मापदंडनिहाय गुण',
+  strengths:'✅ बलस्थाने', improve:'🔧 सुधारणा', missing:'💡 चुकलेले मुद्दे', mpscSpec:'MPSC:',
+  pNames:{contentDepth:'विषयाची खोली',structureClarity:'रचना व स्पष्टता',examples:'उदाहरणे',introduction:'प्रस्तावना',conclusion:'निष्कर्ष',wordLimit:'शब्दमर्यादा'},
+  swotTitle:'माझे SWOT विश्लेषण', swotDesc:'विषयनिहाय कामगिरीचे AI विश्लेषण',
+  noSwot:'अद्याप डेटा नाही — MCQ सराव करून SWOT तयार करा',
+  subPerf:'विषयनिहाय कामगिरी', genSwot:'SWOT विश्लेषण तयार करा', analysing:'विश्लेषण होत आहे...',
+  studyPlan:'📅 अभ्यास योजना',
+  swotQ:{strengths:'💪 बलस्थाने',weaknesses:'🔧 कमकुवत बाजू',opportunities:'🚀 संधी',threats:'⚠️ धोके'},
+  swotC:['var(--green)','var(--red)','var(--teal)','var(--gold)'],
+  swotBg:['rgba(34,197,94,.06)','rgba(239,68,68,.06)','rgba(14,165,160,.06)','rgba(245,166,35,.06)'],
+  swotBd:['rgba(34,197,94,.2)','rgba(239,68,68,.2)','rgba(14,165,160,.2)','rgba(245,166,35,.2)'],
+  ivTitle:'AI मॉक मुलाखत', ivDesc:'MPSC पॅनेल सिम्युलेशन व वैयक्तिक अभिप्राय',
+  yourProfile:'तुमची माहिती',
+  ivFields:{name:'पूर्ण नाव *',edu:'शिक्षण *',dist:'गृह जिल्हा *',opt:'वैकल्पिक विषय',hobby:'छंद',exp:'कामाचा अनुभव'},
+  ivPH:{name:'अर्जातील नावानुसार',edu:'उदा. B.E. सिव्हिल, नागपूर विद्यापीठ',dist:'उदा. पुणे, नाशिक, नागपूर',opt:'उदा. भूगोल, इतिहास',hobby:'उदा. वाचन, ट्रेकिंग',exp:'उदा. 2 वर्षे IT'},
+  ivNote:'AI तुमच्या जिल्हा, शिक्षण व चालू घडामोडींवर वैयक्तिक प्रश्न विचारेल — अगदी खऱ्या MPSC बोर्डासारखे.',
+  startIv:'मॉक मुलाखत सुरू करा', settingUp:'सेटअप होत आहे...', board:'MPSC मंडळ', typeAnsIv:'उत्तर टाइप करा...', voiceMode:'🎙 आवाज', typeMode:'⌨️ टाइप', recording:'रेकॉर्ड होत आहे... बोला', tapToStop:'थांबण्यासाठी क्लिक करा', voiceNotSupported:'या ब्राउझरमध्ये आवाज समर्थित नाही. Chrome वापरा.',
+  ivFbTitle:'मुलाखत अभिप्राय', dimScore:'मापदंडनिहाय गुण', keyTips:'💡 महत्त्वाच्या टिप्स', newIv:'नवी मुलाखत',
+  dNames:{communication:'संवाद कौशल्य',subjectKnowledge:'विषय ज्ञान',confidence:'आत्मविश्वास',analyticalAbility:'विश्लेषण क्षमता',currentAffairs:'चालू घडामोडी',personalityFit:'व्यक्तिमत्त्व'},
+  sylBadge:'🎯 MPSC अभ्यासक्रम फिल्टर: चालू — फक्त राज्यसेवा अभ्यासक्रमातील लेख काढले जातात',
+}
+};
+
+const SYLLABUS = `MPSC Rajyaseva Syllabus - ONLY extract/generate content on:
+Polity: Constitution, amendments, Parliament, SC/HC judgments, Maharashtra governance, Governor, Panchayati Raj
+Economy: RBI, Budget, inflation, banking, Maharashtra agriculture, cooperative sector, MSP
+Environment: Climate change, biodiversity, wildlife, pollution laws, disasters
+History: Modern India post-1857, freedom struggle, Maharashtra history, social reformers
+Geography: India & Maharashtra rivers, mountains, districts, crops
+Science & Tech: ISRO, defence, nuclear, AI, biotech, new discoveries
+International: India foreign policy, UN, SAARC, bilateral summits, treaties
+Maharashtra: State govt schemes (Ladki Bahin, Jalyukt Shivar), Mumbai/Pune/Nagpur development, tribal welfare
+Current Affairs: Cabinet decisions, new laws, award winners (Bharat Ratna, Padma, Nobel), economic data, important days
+EXCLUDE everything else: cricket scores, Bollywood, stock tips, crime, celebrity gossip, entertainment, ads`;
+
+// ── SVG ────────────────────────────────────────────────────────────────────
+const IC = {
+  notes:'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+  quiz:'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
+  edit:'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z',
+  chart:'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+  mic:'M12 1a3 3 0 013 3v8a3 3 0 01-6 0V4a3 3 0 013-3zM7 10v2a5 5 0 0010 0v-2M12 19v4M8 23h8',
+  news:'M4 4h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm0 0l2-2h12l2 2M8 10h8M8 14h5',
+  up:'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12',
+  bulb:'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z',
+  send:'M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z',
+  refresh:'M4 4v5h5M20 20v-5h-5M4 9a9 9 0 0115 0M20 15a9 9 0 01-15 0',
+  back:'M10 19l-7-7m0 0l7-7m-7 7h18',
+  star:'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
+};
+const ic=(n,s=15,c='currentColor')=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${IC[n]||''}"/></svg>`;
+const sp=()=>'<span class="sp"></span>';
+const t=()=>L[ST.lang];
+
+// ── API ────────────────────────────────────────────────────────────────────
+// ── API KEY — stored on window so it survives any scope issue ──────────────
+window.MPSC_KEY = '';
+
+function setMpscKey(k){ window.MPSC_KEY = (k||'').trim(); }
+function getMpscKey(){ return window.MPSC_KEY || ''; }
+
+async function callAI(messages, system, max){
+  max = max || 1500;
+  var key = getMpscKey();
+  if(!key){
+    alert('API key missing. Please re-enter your Anthropic API key.');
+    showModal(); return '';
+  }
+  var body = { model:'claude-sonnet-4-5', max_tokens:max, messages:messages };
+  if(system) body.system = system;
+  var resp, data;
+  try{
+    resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify(body)
+    });
+  }catch(fetchErr){
+    throw new Error('Network error: ' + fetchErr.message);
+  }
+  try{ data = await resp.json(); }catch(e){ throw new Error('Bad response from API (status '+resp.status+')'); }
+  if(data && data.error){
+    var em = data.error.message || 'Unknown API error';
+    if(resp.status===401 || em.toLowerCase().indexOf('auth')>=0 || em.toLowerCase().indexOf('credential')>=0){
+      var retry = confirm('Authentication failed.\n\nKey in use: ' + key.slice(0,8)+'...'+key.slice(-4) + '\n\nThis usually means the key is invalid or expired.\nClick OK to re-enter your API key.');
+      if(retry){ setMpscKey(''); showModal(); }
+      throw new Error(em);
+    }
+    throw new Error(em);
+  }
+  if(!data || !data.content){ throw new Error('Empty response from API'); }
+  return data.content[0].text || '';
+}
+
+function showModal(){
+  document.getElementById('shell').classList.add('hidden');
+  document.getElementById('key-modal').classList.remove('hidden');
+  document.getElementById('key-inp').value='';
+}
+async function callWithFile(b64,mime,prompt,sys,max=3000){
+  const isPDF=mime==='application/pdf';
+  return callAI([{role:'user',content:[
+    isPDF?{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}}
+         :{type:'image',source:{type:'base64',media_type:mime,data:b64}},
+    {type:'text',text:prompt}
+  ]}],sys,max);
+}
+const toB64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f);});
+const parseJ=s=>{try{return JSON.parse(s.replace(/```json|```/g,'').trim());}catch(e){throw new Error('JSON parse failed: '+e.message);}};
+const estPg=f=>Math.max(1,Math.round(f.size/80000));
+
+// ── KEY MODAL ──────────────────────────────────────────────────────────────
+async function saveKey(){
+  const k=document.getElementById('key-inp').value.trim();
+  const err=document.getElementById('key-err');
+  const btn=document.getElementById('key-btn');
+  err.classList.add('hidden');
+  if(!k){err.textContent='Please enter your API key';err.classList.remove('hidden');return;}
+  if(k.length < 20){err.textContent='Key seems too short. Please paste your full Anthropic API key.';err.classList.remove('hidden');return;}
+  btn.disabled=true;btn.innerHTML=sp()+' Testing key...';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:10,messages:[{role:'user',content:'Hi'}]})
+    });
+    const d=await r.json();
+    if(d.error)throw new Error(d.error.message);
+    setMpscKey(k);
+    document.getElementById('key-modal').classList.add('hidden');
+    document.getElementById('shell').classList.remove('hidden');
+    boot();
+  }catch(e){err.textContent='Error: '+e.message;err.classList.remove('hidden');btn.disabled=false;btn.innerHTML='✓ Save &amp; Continue';}
+}
+function changeKey(){if(confirm('Clear API key and re-enter?')){setMpscKey('');document.getElementById('shell').classList.add('hidden');document.getElementById('key-modal').classList.remove('hidden');document.getElementById('key-inp').value='';}}
+
+// ── BOOT ───────────────────────────────────────────────────────────────────
+function boot(){
+  document.getElementById('tb-date').textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+  try{const saved=JSON.parse(localStorage.getItem('mpsc_sessions')||'[]');if(saved.length)ST.dashSessions=saved;}catch(e){}
+  rebuildSidebar();render();
+}
+window.onload=()=>{ if(getMpscKey()){document.getElementById('key-modal').classList.add('hidden');document.getElementById('shell').classList.remove('hidden');boot();}};
+
+// ── SIDEBAR ────────────────────────────────────────────────────────────────
+function rebuildSidebar(){
+  const l=t();
+  document.getElementById('sb-sub').textContent=l.sub;
+  document.getElementById('sb-stats-l').textContent=l.stats;
+  document.getElementById('sl-art').textContent=l.art;
+  document.getElementById('sl-q').textContent=l.qs;
+  document.getElementById('sl-s').textContent=l.subs;
+  document.getElementById('sv-art').textContent=ST.notes.reduce((a,n)=>a+n.articles.length,0);
+  document.getElementById('sv-q').textContent=ST.mcqSets.reduce((a,s)=>a+s.count,0);
+  document.getElementById('sv-s').textContent=Object.keys(ST.swot).length;
+  document.getElementById('btn-s').textContent=l.student;
+  document.getElementById('btn-a').textContent=l.admin;
+  document.getElementById('btn-s').className='mode-btn lat'+(ST.mode==='student'?' on':'');
+  document.getElementById('btn-a').className='mode-btn lat'+(ST.mode==='admin'?' on':'');
+  document.getElementById('lang-lbl').textContent=l.langLbl;
+  const isMr=ST.lang==='mr';
+  document.getElementById('trk').style.background=isMr?'var(--saffron)':'var(--teal)';
+  document.getElementById('thm').className='thm lat'+(isMr?' on':'');
+  document.getElementById('pg-tag').textContent=ST.mode==='admin'?l.adPanel:l.stPortal;
+  document.getElementById('tb-av').textContent=ST.mode==='admin'?'A':'S';
+  document.getElementById('tb-av').style.background=ST.mode==='admin'?'var(--teal)':'var(--gold)';
+  document.getElementById('tb-av').style.color=ST.mode==='admin'?'#fff':'#0C0800';
+  const tc=document.getElementById('tcbar');
+  if(isMr){tc.className='tribar';}else{tc.className='hidden';}
+  document.body.className=isMr?'mr':'';
+  const adminTabs=[['caAdmin',l.navLabels.caAdmin,'news'],['mcqAdmin',l.navLabels.mcqAdmin,'quiz']];
+  const studentTabs=[['notes',l.navLabels.notes,'notes'],['mcq',l.navLabels.mcq,'quiz'],['mains',l.navLabels.mains,'edit'],['swot',l.navLabels.swot,'chart'],['interview',l.navLabels.interview,'mic'],['knowledge',l.navLabels.knowledge||'Knowledge','globe'],['dashboard',l.navLabels.dashboard||'Dashboard','chart']];
+  const tabs=ST.mode==='admin'?adminTabs:studentTabs;
+  const nav=document.getElementById('nav-menu');
+  nav.innerHTML='<div class="nav-label">'+(ST.mode==='admin'?l.adTools:l.stTools)+'</div>';
+  tabs.forEach(([id,lbl,ico])=>{
+    const d=document.createElement('div');
+    d.className='nav-item'+(ST.tab===id?' on':'');
+    d.innerHTML=ic(ico,15)+lbl;
+    d.onclick=()=>{ST.tab=id;rebuildSidebar();render();};
+    nav.appendChild(d);
+  });
+  const titleMap=Object.fromEntries(tabs);
+  if(tabs.find(t=>t[0]===ST.tab))document.getElementById('pg-title').textContent=tabs.find(t=>t[0]===ST.tab)[1];
+}
+function setMode(m){ST.mode=m;ST.tab=m==='admin'?'caAdmin':'notes';rebuildSidebar();render();}
+function toggleLang(){ST.lang=ST.lang==='en'?'mr':'en';rebuildSidebar();render();}
+
+// ── ROUTER ─────────────────────────────────────────────────────────────────
+function render(){
+  const c=document.getElementById('content');
+  c.className='fade';void c.offsetWidth;
+  if(ST.mode==='admin'){
+    if(ST.tab==='caAdmin')c.innerHTML=pgAdminNotes();
+    else if(ST.tab==='mcqAdmin')c.innerHTML=pgAdminMCQ();
+  }else{
+    if(ST.tab==='notes')c.innerHTML=pgStudentNotes();
+    else if(ST.tab==='mcq')c.innerHTML=pgMCQ();
+    else if(ST.tab==='mains')c.innerHTML=pgMains();
+    else if(ST.tab==='swot')c.innerHTML=pgSwot();
+    else if(ST.tab==='interview')c.innerHTML=pgInterview();
+    else if(ST.tab==='knowledge')c.innerHTML=pgKnowledge();
+    else if(ST.tab==='dashboard')c.innerHTML=pgDashboard();
+  }
+  afterRender();
+}
+
+// ── ADMIN: NOTES ──────────────────────────────────────────────────────────
+function pgAdminNotes(){
+  const l=t();
+  const papers=['The Hindu','Indian Express','Loksatta','Sakal','Maharashtra Times','PIB Release','Economic Times'];
+  let notesHtml='';
+  ST.notes.forEach((n,ni)=>{
+    let arts=n.articles.map(a=>`<div class="art">
+      <div class="art-h"><div class="art-t">${a.headline||''}</div><span class="tag tt">${a.syllabusTag||''}</span></div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:8px">${a.summary||''}</p>
+      ${a.possibleQuestion?`<div style="font-size:12px;color:var(--gold);margin-bottom:4px">📝 ${a.possibleQuestion}</div>`:''}
+      ${a.mpscAngle?`<div style="font-size:12px;color:var(--teal);margin-bottom:4px">🏛️ ${a.mpscAngle}</div>`:''}
+      ${a.whyItMatters?`<div style="font-size:12px;color:var(--dim)">📌 ${a.whyItMatters}</div>`:''}
+      <div style="margin-top:8px">${(a.keyTerms||[]).map(k=>`<span class="kterm">${k}</span>`).join('')}</div>
+    </div>`).join('');
+    notesHtml+=`<div class="card cbody" style="margin-bottom:14px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;cursor:pointer" onclick="toggleN(${ni})">
+        <span>${n.fileType==='pdf'?'📄':'🖼️'}</span>
+        <span class="tag tg">${n.paper}</span><span class="tag tt">${n.topic}</span>
+        ${n.pages>1?`<span class="tag tr">${n.pages}p</span>`:''}
+        <span style="font-size:12px;color:var(--muted);margin-left:auto">${n.date}</span>
+        <span class="tag tk">${n.articles.length} ${l.art}</span>
+        <span style="font-size:12px;color:var(--muted)" id="arr-${ni}">${n.open?'▲':'▼'}</span>
+      </div>
+      <div id="na-${ni}" style="${n.open?'':'display:none'};margin-top:${n.open?14:0}px">
+        ${arts||`<p style="color:var(--muted);font-size:13px;padding:8px 0">No MPSC-relevant articles found in this issue.</p>`}
+      </div>
+    </div>`;
+  });
+  return `<div class="sec-title">${l.notesTitle}</div>
+    <p class="sec-sub">${l.notesDesc}</p>
+    <div class="syl">${ic('bulb',13,'var(--gold)')} ${l.sylBadge}</div>
+    <div class="card cbody" style="margin-bottom:18px">
+      <div class="g2 field">
+        <div><label>${l.paper}</label><select id="an-p">${papers.map(p=>`<option>${p}</option>`).join('')}</select></div>
+        <div><label>${l.section}</label><input id="an-t" placeholder="${l.secPH}"/></div>
+      </div>
+      <div class="upzone" id="an-z" onclick="document.getElementById('an-f').click()"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="dropFile(event,'an')">
+        <input type="file" id="an-f" accept="image/*,application/pdf" style="display:none" onchange="pickFile(event,'an')"/>
+        <div id="an-pv" style="pointer-events:none">
+          <div style="opacity:.5;display:flex;justify-content:center;gap:16px;margin-bottom:8px">${ic('up',28)}${ic('notes',28)}</div>
+          <div style="font-weight:600;margin-bottom:4px">${l.dropTxt}</div>
+          <div style="font-size:12px;color:var(--muted)">${l.dropSub}</div>
+        </div>
+      </div>
+      <div id="an-pn" style="display:none"></div>
+      <button class="btn btn-g btn-w" id="an-btn" disabled onclick="doGenNotes()">${ic('bulb',15)} ${l.genNotes}</button>
+    </div>
+    ${notesHtml}`;
+}
+
+function toggleN(ni){
+  ST.notes[ni].open=!ST.notes[ni].open;
+  const el=document.getElementById('na-'+ni);
+  if(el){el.style.display=ST.notes[ni].open?'':'none';el.style.marginTop=ST.notes[ni].open?'14px':'0';}
+  const arr=document.getElementById('arr-'+ni);
+  if(arr)arr.textContent=ST.notes[ni].open?'▲':'▼';
+}
+
+function dropFile(e,pfx){e.preventDefault();document.getElementById(pfx+'-z').classList.remove('drag');pickFile({target:{files:e.dataTransfer.files}},pfx);}
+function pickFile(e,pfx){
+  const f=e.target.files[0];if(!f)return;
+  if(pfx==='an'){
+    ST.anFile=f;
+    const isPDF=f.type==='application/pdf'||f.name.endsWith('.pdf');
+    const pv=document.getElementById('an-pv');
+    const pn=document.getElementById('an-pn');
+    if(isPDF){
+      const pg=estPg(f);
+      pv.innerHTML=`<div class="pdf-icon"><span style="font-size:20px">📄</span><span style="font-size:9px;font-weight:700;color:#fff;letter-spacing:1px">PDF</span></div>
+        <div style="font-weight:600;font-size:14px;margin-bottom:8px">${f.name}</div>
+        <div><span class="tag tg">~${pg} pages</span> <span class="tag tt">${(f.size/1024/1024).toFixed(2)} MB</span></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px">${t().clickReplace}</div>`;
+      if(pg>3){pn.innerHTML=`<div class="notice n-gold" style="margin-top:10px">📑 ${t().multiPDF.replace('{n}',pg)}</div>`;pn.style.display='';}
+      else pn.style.display='none';
+    }else{
+      const url=URL.createObjectURL(f);
+      pv.innerHTML=`<img src="${url}" style="max-height:190px;max-width:100%;border-radius:8px;object-fit:contain"/>`;
+      pn.style.display='none';
+    }
+    document.getElementById('an-btn').disabled=false;
+  }else if(pfx==='ma'){
+    ST.maFile=f;
+    const pv=document.getElementById('ma-pv');
+    if(!pv)return;
+    if(f.type==='application/pdf'){
+      pv.innerHTML=`<div style="text-align:center;padding:12px"><div style="font-size:36px">📄</div><div style="font-weight:600;font-size:13px;margin-top:6px">${f.name}</div></div>`;
+    }else{
+      const url=URL.createObjectURL(f);
+      pv.innerHTML=`<img src="${url}" style="max-height:170px;max-width:100%;border-radius:8px;object-fit:contain"/>`;
+    }
+  }
+}
+
+async function doGenNotes(){
+  const l=t(); if(!ST.anFile)return;
+  const btn=document.getElementById('an-btn');
+  const isPDF=ST.anFile.type==='application/pdf'||ST.anFile.name.endsWith('.pdf');
+  const pg=estPg(ST.anFile);
+  btn.disabled=true;btn.innerHTML=sp()+' '+(isPDF&&pg>3?l.readingPDF.replace('{n}',pg):l.extracting);
+  try{
+    const b64=await toB64(ST.anFile);
+    const mime=isPDF?'application/pdf':(ST.anFile.type||'image/jpeg');
+    const paper=document.getElementById('an-p').value;
+    const topic=document.getElementById('an-t').value||'General';
+    const sys=`You are an MPSC Rajyaseva notes expert. ${SYLLABUS}
+Return ONLY valid JSON (no markdown, no extra text):
+{"articles":[{"headline":"","syllabusTag":"Polity|Economy|Environment|History|Geography|Science & Tech|Maharashtra|International|Social Issues","summary":"2-3 sentences in ${ST.lang==='mr'?'Marathi':'English'}","whyItMatters":"1 sentence","possibleQuestion":"one MPSC question","keyTerms":["term"],"mpscAngle":"Maharashtra connection or empty string"}]}
+If no relevant articles found return: {"articles":[]}`;
+    const raw=await callWithFile(b64,mime,`${isPDF?'PDF of':'Page from'} ${paper}, section: ${topic}. Extract ONLY MPSC-syllabus articles. Ignore sports, entertainment, crime, ads.`,sys,isPDF?4000:2500);
+    const d=parseJ(raw);
+    ST.notes.unshift({id:Date.now(),date:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),paper,topic,articles:d.articles||[],fileType:isPDF?'pdf':'image',fileName:ST.anFile.name,pages:isPDF?pg:1,open:true});
+    ST.anFile=null;updateStats();render();
+  }catch(e){alert('Error: '+e.message);btn.disabled=false;btn.innerHTML=ic('bulb',15)+' '+l.genNotes;}
+}
+
+// ── ADMIN: MCQ ─────────────────────────────────────────────────────────────
+function pgAdminMCQ(){
+  const l=t();
+  if(!ST.notes.length)return`<div class="sec-title">${l.mcqAdTitle}</div><p class="sec-sub">${l.mcqAdDesc}</p>
+    <div class="syl">${ic('bulb',13,'var(--gold)')} ${l.sylBadge}</div>
+    <div class="card cbody" style="text-align:center;padding:40px;color:var(--muted)">${l.noNotesTip}</div>`;
+  const isMr=ST.lang==='mr';
+  const lvls=isMr?[{v:'Easy',l:'सोपे'},{v:'Medium',l:'मध्यम'},{v:'Hard',l:'कठीण'},{v:'Mixed',l:'मिश्र'}]
+    :[{v:'Easy',l:'Easy'},{v:'Medium',l:'Medium'},{v:'Hard',l:'Hard'},{v:'Mixed',l:'Mixed'}];
+  let setsHtml=ST.mcqSets.map(s=>{
+    let qs=s.questions.slice(0,2).map((q,i)=>`<div style="background:var(--surf2);border-radius:8px;padding:14px;margin-bottom:10px">
+      <div style="font-weight:500;font-size:13px;margin-bottom:10px">Q${i+1}. ${q.q}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        ${(q.options||[]).map(o=>`<div style="font-size:12px;padding:6px 10px;border-radius:6px;background:${o.startsWith(q.answer+'.')?'rgba(34,197,94,.15)':'var(--bdr)'};color:${o.startsWith(q.answer+'.')?'var(--green)':'var(--muted)'};font-weight:${o.startsWith(q.answer+'.')?600:400}">${o}</div>`).join('')}
+      </div></div>`).join('');
+    return`<div class="card cbody" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:14px">
+        <div><div style="font-weight:600">${s.source}</div><div style="font-size:12px;color:var(--muted);margin-top:3px">${s.date} · ${s.count}Q · ${s.level}</div></div>
+        <span class="tag tg">${s.level}</span></div>
+      ${qs}${s.count>2?`<div style="font-size:12px;color:var(--muted);text-align:center">${l.moreQ.replace('{n}',s.count-2)}</div>`:''}</div>`;
+  }).join('');
+  const srcOpts=ST.notes.map((n,i)=>`<option value="${i}">${n.date} – ${n.paper} (${n.articles.length})</option>`).join('');
+  return`<div class="sec-title">${l.mcqAdTitle}</div><p class="sec-sub">${l.mcqAdDesc}</p>
+    <div class="syl">${ic('bulb',13,'var(--gold)')} ${l.sylBadge}</div>
+    <div class="card cbody" style="margin-bottom:18px">
+      <div class="g3 field">
+        <div><label>${l.srcBatch}</label><select id="mq-s">${srcOpts}</select></div>
+        <div><label>${l.cnt}</label><select id="mq-c">${[3,5,8,10].map(n=>`<option>${n}</option>`).join('')}</select></div>
+        <div><label>${l.diff}</label><select id="mq-l">${lvls.map(lv=>`<option value="${lv.v}">${lv.l}</option>`).join('')}</select></div>
+      </div>
+      <button class="btn btn-t btn-w" id="mq-btn" onclick="doGenMCQ()">${ic('quiz',15)} ${l.genMCQ}</button>
+    </div>${setsHtml}`;
+}
+
+async function doGenMCQ(){
+  const l=t();
+  const ni=parseInt(document.getElementById('mq-s').value);
+  const cnt=parseInt(document.getElementById('mq-c').value);
+  const lvl=document.getElementById('mq-l').value;
+  const note=ST.notes[ni];
+  if(!note||!note.articles.length){alert(l.noNotesTip);return;}
+  const btn=document.getElementById('mq-btn');
+  btn.disabled=true;btn.innerHTML=sp()+' '+l.generating;
+  try{
+    const txt=note.articles.map(a=>`[${a.syllabusTag}] ${a.headline}: ${a.summary}`).join('\n');
+    const sys=`You are an MPSC Rajyaseva question setter. ${SYLLABUS}
+Return ONLY valid JSON:
+{"questions":[{"q":"question in ${ST.lang==='mr'?'Marathi':'English'}","options":["A. text","B. text","C. text","D. text"],"answer":"A","explanation":"brief explanation in ${ST.lang==='mr'?'Marathi':'English'}","syllabusTag":"tag","difficulty":"Easy|Medium|Hard"}]}`;
+    const raw=await callAI([{role:'user',content:`Create ${cnt} MPSC MCQs (${lvl} difficulty) from these articles:\n${txt}`}],sys,3000);
+    const d=parseJ(raw);
+    ST.mcqSets.unshift({id:Date.now(),date:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'}),source:`${note.paper} – ${note.topic}`,count:d.questions.length,level:lvl,questions:d.questions});
+    updateStats();render();
+  }catch(e){alert('Error: '+e.message);btn.disabled=false;btn.innerHTML=ic('quiz',15)+' '+l.genMCQ;}
+}
+
+// ── STUDENT: NOTES ─────────────────────────────────────────────────────────
+function pgStudentNotes(){
+  const l=t();
+  const arts=ST.notes.flatMap(n=>n.articles.map(a=>({...a,date:n.date,paper:n.paper})));
+  const tags=[l.allFil,...new Set(arts.map(a=>a.syllabusTag).filter(Boolean))];
+  const f=ST.notesFilter||l.allFil;
+  const filtered=f===l.allFil?arts:arts.filter(a=>a.syllabusTag===f);
+  const tabsH=tags.map(tg=>`<div class="ftab${f===tg?' on':''}" onclick="ST.notesFilter='${tg}';render()">${tg}</div>`).join('');
+  const cardsH=filtered.length?filtered.map(a=>`<div class="card cbody" style="margin-bottom:14px;border-left:3px solid var(--teal)">
+    <div class="art-h"><div class="art-t">${a.headline||''}</div><span class="tag tt">${a.syllabusTag||''}</span></div>
+    <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:8px">${a.summary||''}</p>
+    ${a.possibleQuestion?`<div style="font-size:12px;color:var(--gold);margin-bottom:6px">❓ ${a.possibleQuestion}</div>`:''}
+    ${a.mpscAngle?`<div style="font-size:12px;color:var(--teal);margin-bottom:6px">🏛️ ${a.mpscAngle}</div>`:''}
+    ${a.whyItMatters?`<div style="font-size:12px;color:var(--dim)">📌 ${a.whyItMatters}</div>`:''}
+    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:10px;align-items:center">
+      ${(a.keyTerms||[]).map(k=>`<span class="kterm">${k}</span>`).join('')}
+      <span style="margin-left:auto;font-size:11px;color:var(--dim)">${a.paper} · ${a.date}</span>
+    </div></div>`).join('')
+    :`<div class="card cbody" style="text-align:center;padding:40px;color:var(--muted)">${l.noNotes}</div>`;
+  return`<div class="sec-title">${l.snTitle}</div><p class="sec-sub">${l.snDesc}</p>
+    <div class="syl">${ic('bulb',13,'var(--gold)')} ${l.sylBadge}</div>
+    <div class="tabs">${tabsH}</div>${cardsH}`;
+}
+
+// ── STUDENT: MCQ ──────────────────────────────────────────────────────────
+function pgMCQ(){
+  const l=t();
+  if(!ST.mcqActive){
+    if(!ST.mcqSets.length)return`<div class="sec-title">${l.mcqTitle}</div><p class="sec-sub">${l.mcqDesc}</p>
+      <div class="syl">${ic('bulb',13,'var(--gold)')} ${l.sylBadge}</div>
+      <div class="card cbody" style="text-align:center;padding:40px;color:var(--muted)">${l.noSets}</div>`;
+    return`<div class="sec-title">${l.mcqTitle}</div><p class="sec-sub" style="margin-bottom:10px">${l.mcqDesc}</p>
+      <div class="syl" style="margin-bottom:16px">${ic('bulb',13,'var(--gold)')} ${l.sylBadge}</div>
+      ${ST.mcqSets.map((s,i)=>`<div class="card set-card" onclick="startQ(${i})">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-weight:600;margin-bottom:4px">${s.source}</div>
+            <div style="font-size:12px;color:var(--muted)">${s.date} · ${s.count}Q · ${s.level}</div></div>
+          <button class="btn btn-t" onclick="event.stopPropagation();startQ(${i})">${l.startBtn}</button>
+        </div></div>`).join('')}`;
+  }
+  if(ST.mcqDone){
+    const pct=Math.round(ST.mcqScore.c/ST.mcqScore.t*100);
+    return`<div class="card cbody" style="text-align:center;padding:40px">
+      <div style="font-size:48px;margin-bottom:12px">${pct>=70?'🎉':pct>=50?'👍':'📚'}</div>
+      <div style="font-family:var(--fd);font-size:30px;margin-bottom:6px">${ST.mcqScore.c}/${ST.mcqScore.t}</div>
+      <div style="color:var(--muted);margin-bottom:24px">${l.scoreTxt.replace('{n}',pct)}</div>
+      <div style="display:flex;gap:12px;justify-content:center">
+        <button class="btn btn-g" onclick="startQ(ST.mcqSetIdx)">${l.retryBtn}</button>
+        <button class="btn btn-gh" onclick="ST.mcqActive=null;ST.mcqDone=false;render()">${l.allSetsBtn}</button>
+      </div></div>`;
+  }
+  const q=ST.mcqActive.questions[ST.mcqQi];
+  const pct=ST.mcqQi/ST.mcqActive.questions.length*100;
+  const dc=q.difficulty==='Hard'?'var(--red)':q.difficulty==='Easy'?'var(--green)':'var(--gold)';
+  const db=q.difficulty==='Hard'?'rgba(239,68,68,.12)':q.difficulty==='Easy'?'rgba(34,197,94,.12)':'rgba(245,166,35,.12)';
+  const opts=(q.options||[]).map(o=>{
+    let cls='mopt';
+    if(ST.mcqRev){if(o.startsWith(q.answer+'.'))cls+=' ok';else if(o===ST.mcqSel)cls+=' bad';}
+    else if(o===ST.mcqSel)cls+=' sel';
+    const esc=o.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return`<div class="${cls}" onclick="selQ('${esc}')">${o}</div>`;
+  }).join('');
+  return`<div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <button class="btn btn-gh" style="padding:7px 12px" onclick="ST.mcqActive=null;ST.mcqDone=false;render()">${ic('back',14)} ${l.backBtn}</button>
+      <span class="tag tt">${ST.mcqScore.c} ${l.corr} · ${ST.mcqScore.w} ${l.wrng}</span>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px">
+        <span>Q ${ST.mcqQi+1}/${ST.mcqActive.questions.length}</span><span>${Math.round(pct)}%</span></div>
+      <div class="pb"><div class="pf" style="width:${pct}%;background:var(--gold)"></div></div>
+    </div>
+    <div class="card cbody">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+        <span class="tag tt">${q.syllabusTag||''}</span>
+        <span class="tag" style="background:${db};color:${dc}">${q.difficulty||'Medium'}</span>
+      </div>
+      <div style="font-weight:600;font-size:15px;line-height:1.6;margin-bottom:18px">Q${ST.mcqQi+1}. ${q.q}</div>
+      ${opts}
+      ${ST.mcqRev?`<div class="expl-box"><strong style="color:var(--green)">${l.expl}</strong> <span style="color:var(--muted)">${q.explanation||''}</span></div>`:''}
+      ${!ST.mcqRev
+        ?`<button class="btn btn-g btn-w" ${ST.mcqSel?'':'disabled'} onclick="submitQ()">${l.submitBtn}</button>`
+        :`<button class="btn btn-t btn-w" onclick="nextQ()">${ST.mcqQi+1>=ST.mcqActive.questions.length?l.resultsBtn:l.nextBtn}</button>`}
+    </div></div>`;
+}
+function startQ(i){ST.mcqSetIdx=i;ST.mcqActive=ST.mcqSets[i];ST.mcqQi=0;ST.mcqSel=null;ST.mcqRev=false;ST.mcqDone=false;ST.mcqScore={c:0,w:0,t:0,sub:{}};render();}
+function selQ(o){if(!ST.mcqRev){ST.mcqSel=o;render();}}
+function submitQ(){
+  if(!ST.mcqSel)return;
+  const q=ST.mcqActive.questions[ST.mcqQi];
+  const ok=ST.mcqSel.startsWith(q.answer+'.');
+  ST.mcqRev=true;
+  const s=q.syllabusTag||'General';
+  ST.mcqScore.c+=(ok?1:0);ST.mcqScore.w+=(ok?0:1);ST.mcqScore.t+=1;
+  if(!ST.mcqScore.sub[s])ST.mcqScore.sub[s]={c:0,t:0};
+  ST.mcqScore.sub[s].c+=(ok?1:0);ST.mcqScore.sub[s].t+=1;
+  render();
+}
+function nextQ(){
+  if(ST.mcqQi+1>=ST.mcqActive.questions.length){
+    ST.mcqDone=true;
+    Object.entries(ST.mcqScore.sub).forEach(([s,d])=>{if(!ST.swot[s])ST.swot[s]={c:0,t:0};ST.swot[s].c+=d.c;ST.swot[s].t+=d.t;});
+    updateStats();
+  }else{ST.mcqQi++;ST.mcqSel=null;ST.mcqRev=false;}
+  render();
+}
+
+// ── STUDENT: MAINS ─────────────────────────────────────────────────────────
+function pgMains(){
+  const l=t();const res=ST.maResult;
+  const sc=s=>s>=8?'var(--green)':s>=5?'var(--gold)':'var(--red)';
+  let resH='';
+  if(res){
+    const params=Object.entries(res.scores||{}).map(([k,v])=>`<div class="param-row">
+      <div class="param-lbl"><span style="color:var(--muted)">${l.pNames[k]||k}</span><span style="font-weight:700;color:${sc(v.score)}">${v.score}/10</span></div>
+      <div class="pb"><div class="pf" style="width:${v.score*10}%;background:${sc(v.score)}"></div></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px">${v.comment||''}</div></div>`).join('');
+    resH=`<div class="score-box"><div class="score-big">${res.totalScore||'--'}</div>
+      <div style="font-weight:700;font-size:17px;margin-top:5px">${l.gradeLbl} ${res.grade||''}</div>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px">${res.overallFeedback||''}</p></div>
+      <div class="card cbody" style="margin-bottom:14px"><div style="font-weight:600;margin-bottom:14px">${l.paramScore}</div>${params}</div>
+      <div class="g2" style="margin-bottom:14px">
+        <div class="card cbody"><div style="font-weight:600;color:var(--green);margin-bottom:10px">${l.strengths}</div>
+          ${(res.strengths||[]).map(s=>`<div style="font-size:13px;color:var(--muted);margin-bottom:6px;padding-left:10px;border-left:2px solid var(--green)">${s}</div>`).join('')}</div>
+        <div class="card cbody"><div style="font-weight:600;color:var(--red);margin-bottom:10px">${l.improve}</div>
+          ${(res.improvements||[]).map(s=>`<div style="font-size:13px;color:var(--muted);margin-bottom:6px;padding-left:10px;border-left:2px solid var(--red)">${s}</div>`).join('')}</div>
+      </div>
+      ${(res.suggestedPoints||[]).length?`<div class="card cbody" style="margin-bottom:14px">
+        <div style="font-weight:600;color:var(--gold);margin-bottom:10px">${l.missing}</div>
+        ${res.suggestedPoints.map(p=>`<div style="font-size:13px;color:var(--muted);margin-bottom:6px">• ${p}</div>`).join('')}</div>`:''}
+      ${res.mpscSpecific?`<div class="notice n-teal">🏛️ <strong>${l.mpscSpec}</strong> ${res.mpscSpecific}</div>`:''}`;
+  }
+  return`<div class="sec-title">${l.maTitle}</div><p class="sec-sub">${l.maDesc}</p>
+    <div class="card cbody" style="margin-bottom:18px">
+      <div class="field"><label>${l.qLabel}</label><textarea id="ma-q" rows="3" placeholder="${l.qPH}">${ST.maQ}</textarea></div>
+      <div class="tabs">
+        <div class="ftab${ST.maMode!=='type'?' on':''}" onclick="ST.maMode='upload';render()">${l.upHW}</div>
+        <div class="ftab${ST.maMode==='type'?' on':''}" onclick="ST.maMode='type';render()">${l.typeAns}</div>
+      </div>
+      ${ST.maMode==='type'
+        ?`<textarea id="ma-typed" rows="8" placeholder="${l.typePH}" style="margin-bottom:12px">${ST.maTyped}</textarea>`
+        :`<div class="upzone" id="ma-z" onclick="document.getElementById('ma-f').click()" style="margin-bottom:12px">
+            <input type="file" id="ma-f" accept="image/*,application/pdf" style="display:none" onchange="pickFile(event,'ma')"/>
+            <div id="ma-pv">${ic('up',26)} <div style="font-weight:600;margin:8px 0 4px">${l.upPH}</div><div style="font-size:12px;color:var(--muted)">${l.upSub}</div></div>
+          </div>`}
+      <button class="btn btn-g btn-w" id="ma-btn" onclick="doEval()">${ic('star',15)} ${l.getEval}</button>
+    </div>${resH}`;
+}
+async function doEval(){
+  const l=t();
+  const q=(document.getElementById('ma-q')||{value:ST.maQ}).value.trim();
+  if(!q){alert('Please enter the question');return;}
+  ST.maQ=q;
+  const btn=document.getElementById('ma-btn');
+  btn.disabled=true;btn.innerHTML=sp()+' '+l.evalBtn;
+  const sys=`You are an MPSC Rajyaseva mains examiner. Evaluate strictly. Return ONLY valid JSON:
+{"scores":{"contentDepth":{"score":0,"comment":""},"structureClarity":{"score":0,"comment":""},"examples":{"score":0,"comment":""},"introduction":{"score":0,"comment":""},"conclusion":{"score":0,"comment":""},"wordLimit":{"score":0,"comment":""}},"totalScore":"XX/60","grade":"A","overallFeedback":"","strengths":[],"improvements":[],"suggestedPoints":[],"mpscSpecific":""}
+All text in ${ST.lang==='mr'?'Marathi':'English'}.`;
+  try{
+    let raw;
+    if(ST.maMode==='type'){
+      const typed=(document.getElementById('ma-typed')||{value:ST.maTyped}).value.trim();
+      if(!typed){alert('Please type your answer');btn.disabled=false;btn.innerHTML=ic('star',15)+' '+l.getEval;return;}
+      ST.maTyped=typed;
+      raw=await callAI([{role:'user',content:`Question: ${q}\n\nAnswer:\n${typed}`}],sys,2000);
+    }else{
+      if(!ST.maFile){alert('Please upload an answer image or PDF');btn.disabled=false;btn.innerHTML=ic('star',15)+' '+l.getEval;return;}
+      const b64=await toB64(ST.maFile);const mime=ST.maFile.type||'image/jpeg';
+      raw=await callWithFile(b64,mime,`Question: ${q}\nEvaluate this answer on MPSC parameters.`,sys,2000);
+    }
+    ST.maResult=parseJ(raw);render();
+  }catch(e){alert('Error: '+e.message);btn.disabled=false;btn.innerHTML=ic('star',15)+' '+l.getEval;}
+}
+
+// ── STUDENT: SWOT ──────────────────────────────────────────────────────────
+function pgSwot(){
+  const l=t();const has=Object.keys(ST.swot).length>0;
+  const sc=p=>p>=70?'var(--green)':p>=50?'var(--gold)':'var(--red)';
+  let perfH='';
+  if(has)perfH=Object.entries(ST.swot).map(([s,d])=>{const p=Math.round(d.c/d.t*100);return`<div class="param-row">
+    <div class="param-lbl"><span style="font-size:13px;color:var(--muted)">${s}</span><span style="font-weight:700;color:${sc(p)}">${d.c}/${d.t} (${p}%)</span></div>
+    <div class="pb"><div class="pf" style="width:${p}%;background:${sc(p)}"></div></div></div>`;}).join('');
+  let aiH='';
+  if(ST.swotAI){
+    const ai=ST.swotAI;
+    const qs=Object.entries(l.swotQ);
+    const grid=qs.map(([k,lb],i)=>`<div style="background:${l.swotBg[i]};border:1px solid ${l.swotBd[i]};border-radius:var(--r);padding:18px">
+      <div style="font-weight:700;color:${l.swotC[i]};margin-bottom:10px">${lb}</div>
+      ${(ai[k]||[]).map(it=>`<div style="font-size:13px;color:var(--muted);margin-bottom:6px;display:flex;gap:6px">
+        <span style="color:${l.swotC[i]}">•</span><span>${it.insight||it.point||''}${it.subject?` (${it.subject})`:''}</span></div>`).join('')}
+    </div>`).join('');
+    aiH=`<div class="swot-grid">${grid}</div>
+      ${ai.studyPlan?`<div class="card cbody"><div style="font-weight:600;color:var(--gold);margin-bottom:12px">${l.studyPlan}</div>
+        ${ai.studyPlan.map(d=>`<div style="font-size:13px;color:var(--muted);margin-bottom:8px;padding-left:12px;border-left:2px solid var(--gold)">${d}</div>`).join('')}</div>`:''}`;
+  }
+  return`<div class="sec-title">${l.swotTitle}</div><p class="sec-sub">${l.swotDesc}</p>
+    ${!has?`<div class="card cbody" style="text-align:center;padding:40px"><div style="font-size:36px;margin-bottom:12px">📊</div><div style="color:var(--muted)">${l.noSwot}</div></div>`
+    :`<div class="card cbody" style="margin-bottom:18px">
+      <div style="font-weight:600;margin-bottom:16px">${l.subPerf}</div>${perfH}
+      <button class="btn btn-g btn-w" id="sw-btn" onclick="doSwot()">${ic('bulb',15)} ${l.genSwot}</button>
+    </div>`}${aiH}`;
+}
+async function doSwot(){
+  const l=t();
+  const btn=document.getElementById('sw-btn');
+  btn.disabled=true;btn.innerHTML=sp()+' '+l.analysing;
+  const sum=Object.entries(ST.swot).map(([s,d])=>`${s}: ${d.c}/${d.t} (${Math.round(d.c/d.t*100)}%)`).join('\n');
+  try{
+    const raw=await callAI([{role:'user',content:`MPSC student performance:\n${sum}\nProvide SWOT and study plan.`}],
+      `MPSC counsellor. Respond in ${ST.lang==='mr'?'Marathi':'English'}. Return ONLY valid JSON:
+{"strengths":[{"subject":"","insight":""}],"weaknesses":[{"subject":"","insight":""}],"opportunities":[{"point":""}],"threats":[{"point":""}],"studyPlan":["Day 1: ..."]}`,1200);
+    ST.swotAI=parseJ(raw);render();
+  }catch(e){alert('Error: '+e.message);btn.disabled=false;btn.innerHTML=ic('bulb',15)+' '+l.genSwot;}
+}
+
+// ── STUDENT: INTERVIEW ─────────────────────────────────────────────────────
+function pgInterview(){
+  const l=t();
+  if(ST.ivStep==='feedback'&&ST.ivFb){
+    const fb=ST.ivFb;const sc=s=>s>=8?'var(--green)':s>=5?'var(--gold)':'var(--red)';
+    const dims=Object.entries(fb.dimensions||{}).map(([k,v])=>`<div class="param-row">
+      <div class="param-lbl"><span style="font-size:13px;color:var(--muted)">${l.dNames[k]||k}</span><span style="font-weight:700;color:${sc(v.score)}">${v.score}/10</span></div>
+      <div class="pb"><div class="pf" style="width:${v.score*10}%;background:${sc(v.score)}"></div></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px">${v.comment||''}</div></div>`).join('');
+    return`<div class="sec-title">${l.ivFbTitle}</div>
+      <div class="score-box" style="margin-bottom:14px">
+        <div class="score-big">${fb.overallScore||'--'}</div>
+        <div style="font-weight:700;font-size:17px;margin-top:5px">${fb.verdict||''}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">${ST.ivBio.name||''} · MPSC ${ST.lang==='mr'?'व्यक्तिमत्त्व चाचणी':'Personality Test'}</div>
+      </div>
+      <div class="card cbody" style="margin-bottom:14px"><div style="font-weight:600;margin-bottom:14px">${l.dimScore}</div>${dims}</div>
+      <div class="g2" style="margin-bottom:14px">
+        <div class="card cbody"><div style="font-weight:600;color:var(--green);margin-bottom:10px">${l.strengths}</div>
+          ${(fb.strengths||[]).map(s=>`<div style="font-size:13px;color:var(--muted);margin-bottom:6px;padding-left:10px;border-left:2px solid var(--green)">${s}</div>`).join('')}</div>
+        <div class="card cbody"><div style="font-weight:600;color:var(--red);margin-bottom:10px">${l.improve}</div>
+          ${(fb.areasToImprove||[]).map(s=>`<div style="font-size:13px;color:var(--muted);margin-bottom:6px;padding-left:10px;border-left:2px solid var(--red)">${s}</div>`).join('')}</div>
+      </div>
+      ${(fb.keyTips||[]).length?`<div class="card cbody" style="margin-bottom:14px">
+        <div style="font-weight:600;color:var(--gold);margin-bottom:10px">${l.keyTips}</div>
+        ${fb.keyTips.map(tp=>`<div style="font-size:13px;color:var(--muted);margin-bottom:6px">• ${tp}</div>`).join('')}</div>`:''}
+      ${(fb.modelAnswerComparison||[]).length?`<div class="report-section" style="margin-bottom:14px">
+        <div style="font-weight:600;color:var(--teal);margin-bottom:12px">📖 Model Answer Comparison</div>
+        ${fb.modelAnswerComparison.slice(0,2).map(m=>`<div style="margin-bottom:14px">
+          <div style="font-size:13px;font-weight:600;color:var(--gold);margin-bottom:8px">Q: ${m.question||''}</div>
+          <div class="report-compare">
+            <div class="compare-box"><div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">YOUR ANSWER</div>${m.userAnswer||''}</div>
+            <div class="compare-box" style="border:1px solid rgba(34,197,94,.3)"><div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px">IDEAL ANSWER</div>${m.idealAnswer||''}</div>
+          </div>
+          ${m.gap?`<div style="font-size:12px;color:var(--red);margin-top:6px;padding:6px 10px;background:rgba(239,68,68,.06);border-radius:6px">Gap: ${m.gap}</div>`:''}
+        </div>`).join('')}
+      </div>`:''}
+      ${fb.improvementPlan?`<div class="report-section" style="margin-bottom:14px">
+        <div style="font-weight:600;color:var(--gold);margin-bottom:12px">🗓️ 3-Week Improvement Plan</div>
+        ${['week1','week2','week3'].map((w,i)=>fb.improvementPlan[w]?`<div style="display:flex;gap:12px;margin-bottom:10px;align-items:flex-start">
+          <div style="background:var(--gold);color:#0C0800;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0">W${i+1}</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.5;padding-top:4px">${fb.improvementPlan[w]}</div>
+        </div>`:'').join('')}
+      </div>`:''}
+      ${ST.ivAnsFeedback.length?`<div class="report-section" style="margin-bottom:14px">
+        <div style="font-weight:600;color:var(--teal);margin-bottom:12px">📊 Answer-by-Answer Performance</div>
+        ${ST.ivAnsFeedback.map((s,i)=>`<div class="prog-row">
+          <span style="font-size:12px;color:var(--muted);width:50px;flex-shrink:0">Ans ${i+1}</span>
+          <div class="prog-bar-wrap"><div class="prog-fill" style="width:${((s.content+s.confidence+s.structure)/30*100).toFixed(0)}%;background:${(s.content+s.confidence+s.structure)>=21?'var(--green)':(s.content+s.confidence+s.structure)>=15?'var(--gold)':'var(--red)'}"></div></div>
+          <span style="font-size:12px;font-weight:600;width:36px;text-align:right">${((s.content+s.confidence+s.structure)/30*10).toFixed(1)}/10</span>
+        </div>`).join('')}
+      </div>`:''}
+      <button class="btn btn-gh" onclick="resetIv()">${ic('refresh',14)} ${l.newIv}</button>`;
+  }
+  if(ST.ivStep==='interview'){
+    const bio=ST.ivBio;
+    const init=(bio.name||'S').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+    const scC=s=>s>=7?'rgba(34,197,94,.15)':s>=4?'rgba(245,166,35,.15)':'rgba(239,68,68,.15)';
+    const scTxt=s=>s>=7?'var(--green)':s>=4?'var(--gold)':'var(--red)';
+    const msgsH=ST.ivMsgs.map(m=>{
+      const scoreH=m.r==='user'&&m.score?`<div class="ans-score">
+        <span class="ans-chip" style="background:${scC(m.score.content)};color:${scTxt(m.score.content)}">📚 Content: ${m.score.content}/10</span>
+        <span class="ans-chip" style="background:${scC(m.score.confidence)};color:${scTxt(m.score.confidence)}">💪 Confidence: ${m.score.confidence}/10</span>
+        <span class="ans-chip" style="background:${scC(m.score.structure)};color:${scTxt(m.score.structure)}">📋 Structure: ${m.score.structure}/10</span>
+        ${m.score.tip?`<span style="font-size:11px;color:var(--muted);width:100%;margin-top:2px">💡 ${m.score.tip}</span>`:''}
+      </div>`:'';
+      return`<div style="display:flex;flex-direction:column">
+        <span class="sndr" style="align-self:${m.r==='user'?'flex-end':'flex-start'}">${m.r==='user'?bio.name||'You':l.board}</span>
+        <div class="bub ${m.r==='user'?'bub-u':'bub-ai'}" style="max-width:85%">${m.c}${scoreH}</div>
+      </div>`;
+    }).join('');
+    return`<div style="display:flex;flex-direction:column;height:calc(100vh - 180px);max-height:580px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div><div style="font-family:var(--fd);font-size:20px">🎤 ${l.ivTitle}</div>
+          <div style="font-size:12px;color:var(--muted)">${bio.name||''} · Q${ST.ivQn}/~10</div></div>
+        <div class="avatar lat" style="background:var(--gold);color:#0C0800">${init}</div>
+      </div>
+      <div class="chat-wrap" id="chat-box">${msgsH}
+        <div id="iv-typing" style="display:none;flex-direction:column">
+          <span class="sndr">${l.board}</span>
+          <div class="bub bub-ai" style="color:var(--muted)">${sp()} ...</div>
+        </div>
+      </div>
+            <div id="iv-mode-bar"></div>
+      <div id="iv-input-area"></div>
+      </div>`;
+  setTimeout(renderIvInputBar, 0);
+  }
+  const flds=Object.entries(l.ivFields);
+  const formH=flds.map(([k,lb])=>`<div><label>${lb}</label>
+    <input id="iv-${k}" placeholder="${l.ivPH[k]||''}" value="${(ST.ivBio[k]||'').replace(/"/g,'&quot;')}"/></div>`).join('');
+    const panels=[
+    {k:'friendly',icon:'🤝',name:'Friendly Panel',desc:'Encouraging board. Good for first practice.'},
+    {k:'stress',icon:'⚡',name:'Stress Interview',desc:'Rapid-fire, challenges under pressure.'},
+    {k:'cross',icon:'🔁',name:'Cross-Questioning',desc:'Deep follow-ups, probes inconsistencies.'}
+  ];
+  const panelH=panels.map(p=>`<div class="panel-card${ST.ivPanelStyle===p.k?' on':''}" onclick="ST.ivPanelStyle='${p.k}';render()">
+    <div class="panel-icon">${p.icon}</div><div class="panel-name">${p.name}</div><div class="panel-desc">${p.desc}</div>
+  </div>`).join('');
+  const riskH=ST.ivRiskZones.length?`<div style="margin-bottom:14px">
+    <div class="daf-section">⚠️ Predicted Risk Zones</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">${ST.ivRiskZones.map(r=>`<span class="risk-badge">${r}</span>`).join('')}</div>
+    ${ST.ivSuggestedQs.slice(0,4).map(q=>`<div style="font-size:13px;padding:6px 10px;background:var(--surf2);border-radius:6px;margin-bottom:5px;border-left:2px solid var(--gold)">❓ ${q}</div>`).join('')}
+  </div>`:'';
+  return`<div class="sec-title">${l.ivTitle}</div><p class="sec-sub">${l.ivDesc}</p>
+    <div class="card cbody">
+      <div class="daf-section">👤 Detailed Profile (DAF)</div>
+      <div class="g2">${formH}</div>
+      <div class="field" style="margin-top:14px"><label>Achievements / Awards / Social Work</label>
+        <input id="iv-achv" placeholder="e.g. NSS volunteer, District topper, Published paper..." value="${(ST.ivBio.achv||'').replace(/"/g,'&quot;')}"/></div>
+      <div class="field"><label>Key Issues in Your District</label>
+        <input id="iv-issues" placeholder="e.g. Water scarcity, farmer distress, urban migration..." value="${(ST.ivBio.issues||'').replace(/"/g,'&quot;')}"/></div>
+      <div class="daf-section">🎭 Choose Panel Style</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">${panelH}</div>
+      ${riskH}
+      <div class="notice n-teal" style="margin-bottom:14px">ℹ️ ${l.ivNote}</div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-gh" style="flex:1;justify-content:center" id="iv-analyze-btn" onclick="analyzeProfile()">🔍 Analyze Profile</button>
+        <button class="btn btn-g" style="flex:1;justify-content:center" id="iv-btn" onclick="startIv()">'+ic('mic',15)+' ${l.startIv}</button>
+      </div>
+    </div>`;
+}
+async function analyzeProfile(){
+  const bio={};['name','edu','dist','opt','hobby','exp','achv','issues'].forEach(k=>{const el=document.getElementById('iv-'+k);bio[k]=el?el.value.trim():'';});
+  if(!bio.name||!bio.dist){alert('Please fill at least Name and District');return;}
+  const btn=document.getElementById('iv-analyze-btn');
+  btn.disabled=true;btn.innerHTML=sp()+' Analysing profile...';
+  try{
+    const raw=await callAI([{role:'user',content:`MPSC candidate profile:
+Name: ${bio.name}, District: ${bio.dist}, Education: ${bio.edu}
+Work: ${bio.exp}, Optional: ${bio.opt}, Hobbies: ${bio.hobby}
+Achievements: ${bio.achv}, District issues: ${bio.issues}
+Analyze this profile for MPSC interview preparation.`}],
+    `You are an MPSC interview expert. Analyze the profile and return ONLY JSON:
+{"riskZones":["area1","area2","area3"],"strengths":["s1","s2"],"suggestedQuestions":["q1","q2","q3","q4","q5","q6"]}`,800);
+    const d=parseJ(raw);
+    ST.ivRiskZones=d.riskZones||[];ST.ivSuggestedQs=d.suggestedQuestions||[];
+    Object.assign(ST.ivBio,bio);
+    render();
+  }catch(e){alert('Error: '+e.message);}
+  btn.disabled=false;btn.innerHTML='🔍 Analyze Profile & Get Risk Zones';
+}
+
+async function startIv(){
+  const l=t();
+  const bio={};['name','edu','dist','opt','hobby','exp','achv','issues'].forEach(k=>{const el=document.getElementById('iv-'+k);bio[k]=el?el.value.trim():'';});
+  if(!bio.name||!bio.edu||!bio.dist){alert('Please fill Name, Education and District');return;}
+  ST.ivBio=bio;
+  const btn=document.getElementById('iv-btn');
+  btn.disabled=true;btn.innerHTML=sp()+' '+l.settingUp;
+
+  // Panel style persona
+  const panelPersonas={
+    friendly:`You are a warm, encouraging MPSC Rajyaseva interview board member. Be supportive but thorough. Acknowledge good answers positively.`,
+    stress:`You are a stern, challenging MPSC board member conducting a stress interview. Interrupt occasionally, question assumptions, ask rapid follow-ups. Test composure under pressure.`,
+    cross:`You are a sharp MPSC board member specializing in cross-examination. Ask deep follow-up questions, probe inconsistencies, challenge every answer with "But why?", "Can you substantiate that?"`
+  };
+  const persona=panelPersonas[ST.ivPanelStyle]||panelPersonas.friendly;
+  const achvLine=bio.achv?`Achievements: ${bio.achv}.`:'';
+  const issuesLine=bio.issues?`Known district issues: ${bio.issues}.`:'';
+  const riskLine=ST.ivRiskZones.length?`Predicted weak areas to probe: ${ST.ivRiskZones.join(', ')}.`:'';
+
+  const sys=`${persona} Conducting interview in ${ST.lang==='mr'?'Marathi':'English'}.
+Candidate: ${bio.name}, from ${bio.dist}, ${bio.edu}, optional: ${bio.opt}, hobbies: ${bio.hobby}. ${achvLine} ${issuesLine} ${riskLine}
+Ask ONE question at a time. Rotate topics: Maharashtra current affairs, polity, optional subject, biodata, achievements, district issues, situational judgment.
+After each answer, briefly acknowledge then ask next question (keep acknowledgment to 1 sentence max).
+After 8-10 exchanges say exactly: "Thank you, the interview is now concluded."`;
+  ST.ivSys=sys;ST.ivAnsFeedback=[];
+  try{
+    const r=await callAI([{role:'user',content:`Start MPSC interview for ${bio.name} from ${bio.dist}. Panel style: ${ST.ivPanelStyle}. Greet and ask first question.`}],sys,400);
+    ST.ivMsgs=[{r:'ai',c:r}];ST.ivStep='interview';ST.ivQn=1;render();scrollChat();
+  }catch(e){alert('Error: '+e.message);btn.disabled=false;btn.innerHTML=ic('mic',15)+' '+l.startIv;}
+}
+async function processAndSend(txt){
+  ST.ivMsgs.push({r:'user',c:txt});ST.ivQn++;
+  render();scrollChat();
+  const typing=document.getElementById('iv-typing');
+  if(typing)typing.style.display='flex';
+  try{
+    // Get AI response + per-answer score in parallel
+    const prevQ=ST.ivMsgs.length>=2?ST.ivMsgs[ST.ivMsgs.length-2].c:'';
+    const [r, scoreRaw] = await Promise.all([
+      callAI(ST.ivMsgs.map(m=>({role:m.r==='user'?'user':'assistant',content:m.c})),ST.ivSys,350),
+      callAI([{role:'user',content:`Question: "${prevQ}"
+Answer: "${txt}"
+Score this MPSC interview answer.`}],
+        `Score briefly. Return ONLY JSON: {"content":0,"confidence":0,"structure":0,"tip":"one short tip in 8 words max"}
+Scores 0-10. Be strict. content=factual accuracy & depth, confidence=assertiveness & certainty, structure=organized logical flow.`,300)
+    ]);
+    let ansScore=null;
+    try{ansScore=parseJ(scoreRaw);}catch(e){}
+    if(ansScore)ST.ivAnsFeedback.push({qi:ST.ivQn-1,...ansScore});
+    ST.ivMsgs.push({r:'ai',c:r,score:ansScore});
+    if(r.toLowerCase().includes('concluded')||ST.ivQn>=11){render();await genIvFb();}
+    else{render();scrollChat();}
+  }catch(e){alert('Error: '+e.message);}
+}
+async function sendIv(){
+  const inp=document.getElementById('iv-inp');if(!inp)return;
+  const txt=inp.value.trim();if(!txt)return;
+  inp.value='';
+  await processAndSend(txt);
+}
+// ── VOICE RECORDING ─────────────────────────────────────────────────────
+let _recog = null;
+let _voiceFinalTxt = '';   // persists across recognition restarts
+
+function setIvMode(voiceOn){
+  ST.ivVoiceMode = voiceOn;
+  ST.ivRecording = false;
+  ST.ivTranscript = '';
+  _voiceFinalTxt = '';
+  if(_recog){ try{_recog.abort();}catch(e){} _recog=null; }
+  render(); scrollChat();
+}
+
+function toggleVoice(){
+  if(ST.ivRecording){ stopVoice(); } else { startVoice(); }
+}
+
+function startVoice(){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    alert('Voice recording needs Chrome or Edge browser. Please switch browser or use the Type mode.');
+    return;
+  }
+  // Stop any existing session first
+  if(_recog){ try{_recog.abort();}catch(e){} _recog=null; }
+
+  _recog = new SR();
+  _recog.continuous = true;
+  _recog.interimResults = true;
+  _recog.lang = ST.lang==='mr' ? 'mr-IN' : 'en-IN';
+
+  _recog.onstart = function(){
+    // Recognition started — update UI without full render
+    ST.ivRecording = true;
+    _updateMicUI(true);
+  };
+
+  _recog.onresult = function(e){
+    var interim = '';
+    for(var i=e.resultIndex; i<e.results.length; i++){
+      if(e.results[i].isFinal){
+        _voiceFinalTxt += e.results[i][0].transcript + ' ';
+      } else {
+        interim += e.results[i][0].transcript;
+      }
+    }
+    ST.ivTranscript = (_voiceFinalTxt + interim).trim();
+    // Update transcript box directly — NO render() call
+    var el = document.getElementById('iv-transcript');
+    if(el){
+      el.textContent = ST.ivTranscript || 'Listening...';
+      el.className = ST.ivTranscript ? 'transcript-preview has-text' : 'transcript-preview';
+    }
+    // Enable send button if we have text
+    var sb = document.getElementById('voice-send-btn');
+    if(sb) sb.disabled = !ST.ivTranscript;
+  };
+
+  _recog.onerror = function(e){
+    if(e.error === 'not-allowed' || e.error === 'permission-denied'){
+      alert('Microphone permission denied.\nPlease allow microphone access in your browser settings and try again.');
+      stopVoice(); return;
+    }
+    if(e.error === 'no-speech'){
+      // No speech detected — just restart silently
+      return;
+    }
+    if(e.error !== 'aborted'){
+      console.warn('Speech error:', e.error);
+    }
+  };
+
+  _recog.onend = function(){
+    // Chrome stops recognition after ~60s or on silence — auto-restart if still recording
+    if(ST.ivRecording && _recog){
+      try{ _recog.start(); } catch(ex){ stopVoice(); }
+    }
+  };
+
+  try{
+    _recog.start();
+    // Optimistically update UI (onstart fires async)
+    ST.ivRecording = true;
+    _updateMicUI(true);
+  } catch(ex){
+    alert('Could not start microphone: ' + ex.message);
+    _recog = null; ST.ivRecording = false;
+  }
+}
+
+function _updateMicUI(recording){
+  // Update only mic button and wave bar — no full render
+  var mb = document.getElementById('mic-btn');
+  if(mb){
+    mb.className = 'mic-btn ' + (recording ? 'recording' : 'idle');
+    mb.innerHTML = recording ? '&#9209;' : '&#127908;';
+  }
+  var waveBars = document.getElementById('iv-wave-bars');
+  var recLabel = document.getElementById('iv-rec-label');
+  if(waveBars) waveBars.style.display = recording ? 'flex' : 'none';
+  if(recLabel) recLabel.style.display = recording ? 'inline' : 'none';
+  var tip = document.getElementById('iv-mic-tip');
+  if(tip) tip.textContent = recording ? 'Tap ⏹ to stop' : 'Tap mic and speak your answer';
+}
+
+function stopVoice(){
+  ST.ivRecording = false;
+  if(_recog){ try{_recog.abort();}catch(e){} _recog=null; }
+  _updateMicUI(false);
+}
+
+async function sendVoiceAns(){
+  var txt = ST.ivTranscript.trim();
+  if(!txt){ alert('No speech recorded yet. Tap the mic and speak first.'); return; }
+  var toSend = txt;
+  ST.ivTranscript = '';
+  _voiceFinalTxt = '';
+  ST.ivRecording = false;
+  if(_recog){ try{_recog.abort();}catch(e){} _recog=null; }
+  await processAndSend(toSend);
+}
+
+function renderIvInputBar(){
+  var l=t();
+  var bar=document.getElementById('iv-mode-bar');
+  var area=document.getElementById('iv-input-area');
+  if(!bar||!area)return;
+  var barH='<div style="margin-bottom:8px;display:flex;gap:8px;align-items:center">';
+  barH+='<button class="voice-mode-btn'+(ST.ivVoiceMode?'':' on')+'" onclick="setIvMode(false)">'+(l.typeMode||'&#9000; Type')+'</button>';
+  barH+='<button class="voice-mode-btn'+(ST.ivVoiceMode?' on':'')+'" onclick="setIvMode(true)">'+(l.voiceMode||'&#127908; Voice')+'</button>';
+  if(ST.ivVoiceMode&&ST.ivRecording){
+    barH+='<div class="voice-bar"><span></span><span></span><span></span><span></span><span></span></div>';
+    barH+='<span style="font-size:12px;color:var(--red);font-weight:600;margin-left:4px">'+(l.recording||'Recording...')+'</span>';
+  }
+  barH+='</div>';
+  bar.innerHTML=barH;
+  if(ST.ivVoiceMode){
+    var tc = ST.ivTranscript ? 'transcript-preview has-text' : 'transcript-preview';
+    var tt = ST.ivTranscript || (ST.ivRecording ? 'Listening...' : 'Your spoken answer will appear here...');
+    var mc = 'mic-btn ' + (ST.ivRecording ? 'recording' : 'idle');
+    var mi = ST.ivRecording ? '&#9209;' : '&#127908;';
+    var sd = ST.ivTranscript ? '' : 'disabled';
+    var tip = ST.ivRecording ? 'Tap &#9209; to stop recording' : 'Tap mic and speak your answer';
+    var waveDisp = ST.ivRecording ? 'flex' : 'none';
+    area.innerHTML =
+      '<div>'
+      + '<div class="'+tc+'" id="iv-transcript" style="min-height:52px;padding:10px 14px">'+tt+'</div>'
+      + '<div style="display:flex;gap:10px;align-items:center;margin-top:8px">'
+      +   '<button class="'+mc+'" id="mic-btn" onclick="toggleVoice()" title="'+tip+'" style="width:48px;height:48px;font-size:22px">'+mi+'</button>'
+      +   '<div style="flex:1">'
+      +     '<div id="iv-mic-tip" style="font-size:12px;color:var(--muted);margin-bottom:4px">'+tip+'</div>'
+      +     '<div id="iv-wave-bars" class="voice-bar" style="display:'+waveDisp+'">'
+      +       '<span></span><span></span><span></span><span></span><span></span>'
+      +     '</div>'
+      +   '</div>'
+      +   '<button class="btn btn-t" id="voice-send-btn" style="padding:9px 18px" onclick="sendVoiceAns()" '+sd+'>Send &#10148;</button>'
+      + '</div>'
+      + '<div id="iv-rec-label" style="display:'+waveDisp+';font-size:11px;color:var(--red);font-weight:600;margin-top:6px;align-items:center;gap:6px">'
+      +   '<span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;animation:pulse 1s infinite"></span>'
+      +   'Recording — speak clearly into your microphone'
+      + '</div>'
+      + '</div>';
+  }else{
+    var ph=l.typeAnsIv||'Type your answer...';
+    area.innerHTML='<div style="display:flex;gap:10px">'
+      +'<input id="iv-inp" placeholder="'+ph+'" style="flex:1"/>'
+      +'<button class="btn btn-t" onclick="sendIv()" style="padding:10px 14px">Send</button>'
+      +'</div>';
+    var inp=document.getElementById('iv-inp');
+    if(inp)inp.addEventListener('keydown',function(e){if(e.key==='Enter')sendIv();});
+  }
+}
+function scrollChat(){setTimeout(()=>{const b=document.getElementById('chat-box');if(b)b.scrollTop=b.scrollHeight;renderIvInputBar();},80);}
+async function genIvFb(){
+  const tr=ST.ivMsgs.map(m=>`${m.r==='user'?ST.ivBio.name:'Board'}: ${m.c}`).join('\n\n');
+  const ansScoresSummary=ST.ivAnsFeedback.length?`Per-answer avg scores: Content=${(ST.ivAnsFeedback.reduce((a,x)=>a+x.content,0)/ST.ivAnsFeedback.length).toFixed(1)}, Confidence=${(ST.ivAnsFeedback.reduce((a,x)=>a+x.confidence,0)/ST.ivAnsFeedback.length).toFixed(1)}, Structure=${(ST.ivAnsFeedback.reduce((a,x)=>a+x.structure,0)/ST.ivAnsFeedback.length).toFixed(1)}`:'';
+  try{
+    const raw=await callAI([{role:'user',content:`Evaluate this MPSC Rajyaseva interview (Panel style: ${ST.ivPanelStyle}). ${ansScoresSummary}\n\nTranscript:\n${tr}`}],
+      `MPSC interview expert. Respond in ${ST.lang==='mr'?'Marathi':'English'}. Return ONLY valid JSON:
+{"overallScore":"XX/100","verdict":"Recommended|Not Recommended|Borderline",
+"dimensions":{"communication":{"score":0,"comment":""},"subjectKnowledge":{"score":0,"comment":""},"confidence":{"score":0,"comment":""},"analyticalAbility":{"score":0,"comment":""},"currentAffairs":{"score":0,"comment":""},"personalityFit":{"score":0,"comment":""}},
+"strengths":[],"areasToImprove":[],"keyTips":[],
+"modelAnswerComparison":[{"question":"","userAnswer":"","idealAnswer":"","gap":""}],
+"improvementPlan":{"week1":"","week2":"","week3":""}}`,2000);
+    ST.ivFb=parseJ(raw);
+    // Save to progress dashboard
+    const scoreNum=parseInt((ST.ivFb.overallScore||'0').replace(/\/100/,''))||0;
+    ST.dashSessions.push({date:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'}),score:scoreNum,panel:ST.ivPanelStyle,verdict:ST.ivFb.verdict||''});
+    try{localStorage.setItem('mpsc_sessions',JSON.stringify(ST.dashSessions));}catch(e){}
+    ST.ivStep='feedback';render();
+  }catch(e){ST.ivStep='feedback';render();}
+}
+function resetIv(){ST.ivStep='setup';ST.ivMsgs=[];ST.ivFb=null;ST.ivQn=0;render();}
+
+// ── KNOWLEDGE BASE ──────────────────────────────────────────────────────────
+const DISTRICTS=['Pune','Mumbai','Nagpur','Nashik','Aurangabad','Solapur','Kolhapur','Amravati','Thane','Satara','Raigad','Sangli','Jalgaon','Dhule','Nandurbar','Yavatmal','Akola','Wardha','Chandrapur','Gadchiroli'];
+
+function pgKnowledge(){
+  const l=t();
+  const d=ST.knowledgeDistrict;
+  const tab=ST.knowledgeTab;
+  const distBtns=DISTRICTS.map(di=>`<div class="district-card${di===d?' on':''}" onclick="ST.knowledgeDistrict='${di}';render()" style="padding:8px 12px;font-size:13px">${di}</div>`).join('');
+  const tabsH=`<div class="tab-line">
+    ${['economy','agriculture','schemes','issues','geography'].map(tb=>`<div class="tab-line-item${tab===tb?' on':''}" onclick="ST.knowledgeTab='${tb}';render()">${{economy:'💰 Economy',agriculture:'🌾 Agriculture',schemes:'📋 Schemes',issues:'⚠️ Issues',geography:'🗺️ Geography'}[tb]}</div>`).join('')}
+  </div>`;
+
+  return`<div class="sec-title">${l.navLabels.knowledge||'Knowledge Base'}</div>
+    <p class="sec-sub">Maharashtra district-wise preparation for MPSC interview — economy, agriculture, schemes, issues</p>
+    <div style="display:flex;gap:16px">
+      <div style="width:180px;flex-shrink:0">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;margin-bottom:10px">SELECT DISTRICT</div>
+        <div style="max-height:520px;overflow-y:auto;padding-right:4px">${distBtns}</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-family:var(--fd);font-size:20px;margin-bottom:4px">📍 ${d}</div>
+        ${tabsH}
+        <div id="knowledge-content" class="card cbody">
+          <div style="display:flex;justify-content:center;padding:20px"><span class="sp"></span></div>
+        </div>
+        <button class="btn btn-g btn-w" style="margin-top:14px" id="know-btn" onclick="loadKnowledge()">🤖 Generate AI Knowledge Card for ${d}</button>
+      </div>
+    </div>`;
+}
+
+async function loadKnowledge(){
+  const btn=document.getElementById('know-btn');
+  if(!btn)return;
+  btn.disabled=true;btn.innerHTML=sp()+' Generating...';
+  const d=ST.knowledgeDistrict;const tab=ST.knowledgeTab;
+  const topicMap={economy:'economic profile, major industries, GDP contribution, employment',agriculture:'major crops, irrigation, farming issues, agri exports',schemes:'key govt schemes running in this district, beneficiaries',issues:'major social/political/environmental issues, challenges',geography:'rivers, dams, hills, tourist spots, strategic importance'};
+  const topic=topicMap[tab]||tab;
+  try{
+    const raw=await callAI([{role:'user',content:`Provide a concise MPSC interview preparation card for ${d} district, Maharashtra focusing on: ${topic}. Format with bullet points.`}],
+      `You are an MPSC expert. Provide factual, exam-relevant content about Maharashtra districts. Respond in ${ST.lang==='mr'?'Marathi':'English'}. Be concise but comprehensive. Format with clear bullet points. Include 2-3 likely MPSC interview questions at the end.`,1200);
+    const c=document.getElementById('knowledge-content');
+    if(c){
+      const lines=raw.split('\n').filter(l=>l.trim());
+      const bodyH=lines.map(l=>{
+        if(l.startsWith('#'))return`<div style="font-weight:700;font-size:15px;color:var(--gold);margin:12px 0 6px">${l.replace(/^#+/,'').trim()}</div>`;
+        if(l.startsWith('-')||l.startsWith('•'))return`<div style="font-size:13px;color:var(--muted);padding:4px 0 4px 12px;border-left:2px solid var(--bdr);margin-bottom:4px">${l.replace(/^[-•]/,'').trim()}</div>`;
+        if(l.match(/^[0-9]+\./))return`<div style="font-size:13px;color:var(--txt);padding:5px 0;font-weight:500">${l}</div>`;
+        if(l.toLowerCase().includes('question'))return`<div style="font-size:13px;color:var(--gold);padding:6px 10px;background:var(--goldd);border-radius:6px;margin:6px 0">${l}</div>`;
+        return`<div style="font-size:13px;color:var(--muted);padding:3px 0">${l}</div>`;
+      }).join('');
+      c.innerHTML=bodyH;
+    }
+  }catch(e){alert('Error: '+e.message);}
+  if(btn){btn.disabled=false;btn.innerHTML=`🤖 Regenerate Knowledge Card`;}
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+function pgDashboard(){
+  const l=t();
+  // Load from localStorage
+  try{const saved=JSON.parse(localStorage.getItem('mpsc_sessions')||'[]');if(saved.length&&!ST.dashSessions.length)ST.dashSessions=saved;}catch(e){}
+  const sessions=ST.dashSessions;
+  const avg=sessions.length?Math.round(sessions.reduce((a,s)=>a+s.score,0)/sessions.length):0;
+  const best=sessions.length?Math.max(...sessions.map(s=>s.score)):0;
+  const total=sessions.length;
+  const verdict=avg>=75?'🟢 Interview Ready':avg>=55?'🟡 Improving':'🔴 Needs Practice';
+
+  const statsH=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px">
+    <div class="dash-stat"><div class="dash-icon" style="background:rgba(245,166,35,.12);color:var(--gold)">🎤</div>
+      <div><div class="dash-val lat" style="color:var(--gold)">${total}</div><div class="dash-lbl">Mock Interviews</div></div></div>
+    <div class="dash-stat"><div class="dash-icon" style="background:rgba(14,165,160,.12);color:var(--teal)">📊</div>
+      <div><div class="dash-val lat" style="color:var(--teal)">${avg}/100</div><div class="dash-lbl">Average Score</div></div></div>
+    <div class="dash-stat"><div class="dash-icon" style="background:rgba(34,197,94,.12);color:var(--green)">🏆</div>
+      <div><div class="dash-val lat" style="color:var(--green)">${best}/100</div><div class="dash-lbl">Best Score</div></div></div>
+  </div>`;
+
+  const statusH=`<div class="card cbody" style="margin-bottom:18px;text-align:center;background:var(--navy)">
+    <div style="font-size:28px;margin-bottom:6px">${verdict.split(' ')[0]}</div>
+    <div style="font-family:var(--fd);font-size:20px;margin-bottom:4px">${verdict.split(' ').slice(1).join(' ')}</div>
+    <div style="font-size:13px;color:var(--muted)">${avg>=75?'You are performing at interview-ready level. Focus on current affairs.'
+      :avg>=55?'Good progress! Focus on weak areas identified in your reports.'
+      :'Keep practicing. Aim for at least 5 mock interviews before your actual interview.'}</div>
+  </div>`;
+
+  const historyH=sessions.length?`<div class="card cbody" style="margin-bottom:18px">
+    <div style="font-weight:600;margin-bottom:16px">📈 Interview History</div>
+    ${sessions.slice().reverse().map((s,i)=>`<div class="prog-row" style="margin-bottom:12px">
+      <div style="width:70px;flex-shrink:0">
+        <div style="font-size:11px;color:var(--muted)">${s.date}</div>
+        <div style="font-size:10px;color:var(--dim);text-transform:capitalize">${s.panel||'friendly'}</div>
+      </div>
+      <div class="prog-bar-wrap"><div class="prog-fill" style="width:${s.score}%;background:${s.score>=75?'var(--green)':s.score>=55?'var(--gold)':'var(--red)'}"></div></div>
+      <div style="text-align:right;min-width:70px">
+        <span style="font-size:13px;font-weight:700;color:${s.score>=75?'var(--green)':s.score>=55?'var(--gold)':'var(--red)'}">${s.score}/100</span>
+        <div style="font-size:10px;color:var(--muted)">${s.verdict||''}</div>
+      </div>
+    </div>`).join('')}
+  </div>`:
+  `<div class="card cbody" style="text-align:center;padding:40px;color:var(--muted)">
+    <div style="font-size:36px;margin-bottom:12px">🎤</div>
+    No interview sessions yet. Complete a Mock Interview to start tracking your progress.
+  </div>`;
+
+  const mcqStatsH=Object.keys(ST.swot).length?`<div class="card cbody" style="margin-bottom:18px">
+    <div style="font-weight:600;margin-bottom:16px">📚 MCQ Subject Performance</div>
+    ${Object.entries(ST.swot).map(([s,d])=>{const p=Math.round(d.c/d.t*100);return`<div class="prog-row">
+      <span style="font-size:12px;color:var(--muted);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s}</span>
+      <div class="prog-bar-wrap"><div class="prog-fill" style="width:${p}%;background:${p>=70?'var(--green)':p>=50?'var(--gold)':'var(--red)'}"></div></div>
+      <span style="font-size:12px;font-weight:700;width:48px;text-align:right;color:${p>=70?'var(--green)':p>=50?'var(--gold)':'var(--red)'}">${p}%</span>
+    </div>`;}).join('')}
+  </div>`:'';
+
+  const clearBtn=`<button class="btn btn-gh" style="margin-top:4px" onclick="if(confirm('Clear all session history?')){ST.dashSessions=[];localStorage.removeItem('mpsc_sessions');render();}">🗑️ Clear History</button>`;
+
+  return`<div class="sec-title">${l.navLabels.dashboard||'My Progress'}</div>
+    <p class="sec-sub">Track your interview preparation journey</p>
+    ${statsH}${statusH}${historyH}${mcqStatsH}${clearBtn}`;
+}
+
+// ── UTILS ──────────────────────────────────────────────────────────────────
+function updateStats(){
+  document.getElementById('sv-art').textContent=ST.notes.reduce((a,n)=>a+n.articles.length,0);
+  document.getElementById('sv-q').textContent=ST.mcqSets.reduce((a,s)=>a+s.count,0);
+  document.getElementById('sv-s').textContent=Object.keys(ST.swot).length;
+}
+function afterRender(){
+  if(ST.ivStep==='interview')scrollChat();
+  const maq=document.getElementById('ma-q');if(maq)maq.addEventListener('input',e=>ST.maQ=e.target.value);
+  const mat=document.getElementById('ma-typed');if(mat)mat.addEventListener('input',e=>ST.maTyped=e.target.value);
+}
+</script>
+</body>
+</html>
